@@ -3,7 +3,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { ArrowRight, Book, Code, Users, Zap, Search, FileText, MessageCircle } from "lucide-react"
 import { Link } from "react-router-dom"
-import heroImage from "@/assets/hero-docs.jpg"
+// Removing image import for now to test if it's causing the issue
+// import heroImage from "@/assets/hero-docs.jpg"
 
 const audienceCards = [
   {
@@ -45,10 +46,8 @@ const Index = () => {
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-hero">
         <div className="absolute inset-0 bg-black/20"></div>
-        <div 
-          className="absolute inset-0 bg-cover bg-center opacity-30"
-          style={{ backgroundImage: `url(${heroImage})` }}
-        ></div>
+        {/* Temporarily removing background image to debug */}
+        <div className="absolute inset-0 bg-gradient-primary opacity-20"></div>
         <div className="relative container mx-auto px-6 py-20 text-center text-white">
           <h1 className="text-5xl md:text-6xl font-bold mb-6">
             Documentation & Support Center
