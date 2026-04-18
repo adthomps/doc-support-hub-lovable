@@ -1,187 +1,154 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { BookOpen, Video, HelpCircle, Star, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Users, BookOpen, Video, HelpCircle, Star, ArrowRight } from "lucide-react"
+import { AptSection } from "@/components/apt/AptSection"
+import { AptCard, AptCardHeader, AptCardTitle, AptCardContent } from "@/components/apt/AptCard"
+import { AptTag } from "@/components/apt/AptTag"
 
 const popularGuides = [
-  { title: "Getting Started Guide", views: "12.5k", rating: 4.9, time: "5 min read" },
-  { title: "Account Settings", views: "8.2k", rating: 4.8, time: "3 min read" },
-  { title: "Billing & Payments", views: "6.1k", rating: 4.7, time: "4 min read" },
-  { title: "Privacy Settings", views: "4.3k", rating: 4.6, time: "2 min read" },
+  { title: "Getting started guide", views: "12.5k", rating: 4.9, time: "5 min read" },
+  { title: "Account settings", views: "8.2k", rating: 4.8, time: "3 min read" },
+  { title: "Billing & payments", views: "6.1k", rating: 4.7, time: "4 min read" },
+  { title: "Privacy settings", views: "4.3k", rating: 4.6, time: "2 min read" },
 ]
 
 const videoTutorials = [
-  { title: "Platform Overview", duration: "12:34", thumbnail: "🎯" },
-  { title: "Advanced Features", duration: "18:45", thumbnail: "⚡" },
-  { title: "Mobile App Guide", duration: "8:22", thumbnail: "📱" },
+  { title: "Platform overview", duration: "12:34" },
+  { title: "Advanced features", duration: "18:45" },
+  { title: "Mobile app guide", duration: "8:22" },
+]
+
+const categories = [
+  { title: "Getting started", description: "Setup and initial configuration", count: 15 },
+  { title: "Account management", description: "Profile, settings, and preferences", count: 23 },
+  { title: "Billing & payments", description: "Subscriptions, invoices, payments", count: 12 },
+  { title: "Troubleshooting", description: "Common issues and solutions", count: 18 },
 ]
 
 export default function Customers() {
   return (
-    <div className="container mx-auto px-6 py-8">
-      <div className="mb-8">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 bg-gradient-primary rounded-lg flex items-center justify-center">
-            <Users className="h-5 w-5 text-white" />
-          </div>
-          <div>
-            <h1 className="text-3xl font-bold">Customer Help Center</h1>
-            <p className="text-muted-foreground">User guides, tutorials, and support articles</p>
-          </div>
-        </div>
-        <Badge variant="secondary">User-Friendly</Badge>
-      </div>
-
-      <div className="grid lg:grid-cols-3 gap-8">
-        {/* Main Content */}
-        <div className="lg:col-span-2 space-y-8">
-          {/* Popular Guides */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <BookOpen className="h-5 w-5" />
-                Popular Guides
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {popularGuides.map((guide, index) => (
-                  <div key={index} className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors group cursor-pointer">
-                    <div className="flex-1">
-                      <h3 className="font-semibold group-hover:text-primary transition-colors">{guide.title}</h3>
-                      <div className="flex items-center gap-4 mt-1 text-sm text-muted-foreground">
-                        <span>{guide.views} views</span>
-                        <div className="flex items-center gap-1">
-                          <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                          <span>{guide.rating}</span>
-                        </div>
-                        <span>{guide.time}</span>
-                      </div>
+    <AptSection
+      spacing="compact"
+      width="wide"
+      eyebrow="Customers"
+      title="Help center"
+      description="User guides, tutorials, and support articles."
+      actions={<AptTag>User</AptTag>}
+    >
+      <div className="grid lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 space-y-6">
+          <AptCard variant="default">
+            <AptCardHeader>
+              <AptCardTitle className="flex items-center gap-2">
+                <BookOpen className="h-4 w-4 text-muted-foreground" /> Popular guides
+              </AptCardTitle>
+            </AptCardHeader>
+            <AptCardContent className="space-y-2">
+              {popularGuides.map((g) => (
+                <AptCard key={g.title} variant="interactive" padding="dense" className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-sm font-medium text-foreground">{g.title}</h3>
+                    <div className="mt-1 flex items-center gap-3 text-xs text-muted-foreground">
+                      <span>{g.views} views</span>
+                      <span className="flex items-center gap-1">
+                        <Star className="h-3 w-3" /> {g.rating}
+                      </span>
+                      <span>{g.time}</span>
                     </div>
-                    <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                   </div>
+                  <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                </AptCard>
+              ))}
+            </AptCardContent>
+          </AptCard>
+
+          <AptCard variant="default">
+            <AptCardHeader>
+              <AptCardTitle className="flex items-center gap-2">
+                <Video className="h-4 w-4 text-muted-foreground" /> Video tutorials
+              </AptCardTitle>
+            </AptCardHeader>
+            <AptCardContent>
+              <div className="grid sm:grid-cols-3 gap-3">
+                {videoTutorials.map((v) => (
+                  <AptCard key={v.title} variant="interactive" padding="dense">
+                    <div className="aspect-video rounded-md bg-secondary border border-border mb-3 flex items-center justify-center">
+                      <Video className="h-5 w-5 text-muted-foreground" />
+                    </div>
+                    <h3 className="text-sm font-medium text-foreground">{v.title}</h3>
+                    <p className="text-xs text-muted-foreground mt-0.5">{v.duration}</p>
+                  </AptCard>
                 ))}
               </div>
-            </CardContent>
-          </Card>
+            </AptCardContent>
+          </AptCard>
 
-          {/* Video Tutorials */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Video className="h-5 w-5" />
-                Video Tutorials
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid sm:grid-cols-2 gap-4">
-                {videoTutorials.map((video, index) => (
-                  <div key={index} className="group cursor-pointer">
-                    <div className="aspect-video bg-gradient-primary rounded-lg flex items-center justify-center mb-3 group-hover:shadow-glow transition-all">
-                      <div className="text-4xl">{video.thumbnail}</div>
-                    </div>
-                    <h3 className="font-semibold group-hover:text-primary transition-colors">{video.title}</h3>
-                    <p className="text-sm text-muted-foreground">{video.duration}</p>
-                  </div>
+          <AptCard variant="default">
+            <AptCardHeader>
+              <AptCardTitle>Browse by category</AptCardTitle>
+            </AptCardHeader>
+            <AptCardContent>
+              <div className="grid sm:grid-cols-2 gap-3">
+                {categories.map((c) => (
+                  <AptCard key={c.title} variant="interactive" padding="dense">
+                    <h3 className="text-sm font-semibold text-foreground mb-1">{c.title}</h3>
+                    <p className="text-xs text-muted-foreground mb-2 leading-relaxed">{c.description}</p>
+                    <AptTag variant="muted">{c.count} articles</AptTag>
+                  </AptCard>
                 ))}
               </div>
-            </CardContent>
-          </Card>
-
-          {/* Categories */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Browse by Category</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid sm:grid-cols-2 gap-4">
-                <div className="p-4 border rounded-lg hover:bg-muted/50 transition-colors">
-                  <h3 className="font-semibold mb-2">🚀 Getting Started</h3>
-                  <p className="text-sm text-muted-foreground mb-3">Basic setup and initial configuration</p>
-                  <span className="text-xs text-primary">15 articles</span>
-                </div>
-                <div className="p-4 border rounded-lg hover:bg-muted/50 transition-colors">
-                  <h3 className="font-semibold mb-2">⚙️ Account Management</h3>
-                  <p className="text-sm text-muted-foreground mb-3">Profile, settings, and preferences</p>
-                  <span className="text-xs text-primary">23 articles</span>
-                </div>
-                <div className="p-4 border rounded-lg hover:bg-muted/50 transition-colors">
-                  <h3 className="font-semibold mb-2">💳 Billing & Payments</h3>
-                  <p className="text-sm text-muted-foreground mb-3">Subscriptions, invoices, and payments</p>
-                  <span className="text-xs text-primary">12 articles</span>
-                </div>
-                <div className="p-4 border rounded-lg hover:bg-muted/50 transition-colors">
-                  <h3 className="font-semibold mb-2">🔧 Troubleshooting</h3>
-                  <p className="text-sm text-muted-foreground mb-3">Common issues and solutions</p>
-                  <span className="text-xs text-primary">18 articles</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+            </AptCardContent>
+          </AptCard>
         </div>
 
-        {/* Sidebar */}
-        <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Need More Help?</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <Button className="w-full" variant="gradient">
-                Contact Support
-              </Button>
-              <Button variant="outline" className="w-full">
-                Live Chat
-              </Button>
-              <Button variant="outline" className="w-full">
-                Community Forum
-              </Button>
-            </CardContent>
-          </Card>
+        <aside className="space-y-6">
+          <AptCard variant="feature">
+            <AptCardHeader>
+              <AptCardTitle className="text-base">Need more help?</AptCardTitle>
+            </AptCardHeader>
+            <AptCardContent className="space-y-2">
+              <Button variant="accent" className="w-full">Contact support</Button>
+              <Button variant="outline" className="w-full">Live chat</Button>
+              <Button variant="outline" className="w-full">Community forum</Button>
+            </AptCardContent>
+          </AptCard>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                <HelpCircle className="h-4 w-4" />
-                Quick FAQ
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="text-sm">
-                <p className="font-medium mb-1">How do I reset my password?</p>
-                <p className="text-muted-foreground">Click "Forgot Password" on the login page...</p>
+          <AptCard variant="subtle">
+            <AptCardHeader>
+              <AptCardTitle className="text-base flex items-center gap-2">
+                <HelpCircle className="h-4 w-4" /> Quick FAQ
+              </AptCardTitle>
+            </AptCardHeader>
+            <AptCardContent className="space-y-3">
+              <div>
+                <p className="text-sm font-medium text-foreground">How do I reset my password?</p>
+                <p className="text-xs text-muted-foreground mt-0.5">Click "Forgot password" on the login page…</p>
               </div>
-              <div className="text-sm">
-                <p className="font-medium mb-1">How do I cancel my subscription?</p>
-                <p className="text-muted-foreground">Go to Account Settings &gt; Billing...</p>
+              <div>
+                <p className="text-sm font-medium text-foreground">How do I cancel my subscription?</p>
+                <p className="text-xs text-muted-foreground mt-0.5">Go to Account settings &gt; Billing…</p>
               </div>
-              <Button variant="ghost" size="sm" className="w-full">
-                View All FAQs
-              </Button>
-            </CardContent>
-          </Card>
+              <Button variant="ghost" size="sm" className="w-full">View all FAQs</Button>
+            </AptCardContent>
+          </AptCard>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Downloads</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
+          <AptCard variant="default">
+            <AptCardHeader>
+              <AptCardTitle className="text-base">Downloads</AptCardTitle>
+            </AptCardHeader>
+            <AptCardContent className="space-y-2">
               <Button variant="outline" className="w-full justify-between">
-                Mobile App (iOS)
-                <span className="text-xs text-muted-foreground">v2.1.0</span>
+                Mobile app (iOS) <span className="text-xs text-muted-foreground">v2.1.0</span>
               </Button>
               <Button variant="outline" className="w-full justify-between">
-                Mobile App (Android)
-                <span className="text-xs text-muted-foreground">v2.1.0</span>
+                Mobile app (Android) <span className="text-xs text-muted-foreground">v2.1.0</span>
               </Button>
               <Button variant="outline" className="w-full justify-between">
-                Desktop App
-                <span className="text-xs text-muted-foreground">v1.5.2</span>
+                Desktop app <span className="text-xs text-muted-foreground">v1.5.2</span>
               </Button>
-            </CardContent>
-          </Card>
-        </div>
+            </AptCardContent>
+          </AptCard>
+        </aside>
       </div>
-    </div>
+    </AptSection>
   )
 }

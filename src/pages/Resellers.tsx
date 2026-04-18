@@ -1,220 +1,170 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { TrendingUp, FileText, Award, Target, Download } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Shield, TrendingUp, Users, FileText, Award, Target, Download } from "lucide-react"
+import { AptSection } from "@/components/apt/AptSection"
+import { AptCard, AptCardHeader, AptCardTitle, AptCardContent } from "@/components/apt/AptCard"
+import { AptTag } from "@/components/apt/AptTag"
 
 const partnerStats = [
-  { label: "Active Partners", value: "2,847", change: "+12%" },
-  { label: "Total Revenue", value: "$1.2M", change: "+24%" },
-  { label: "Commission Rate", value: "15%", change: "Avg" },
+  { label: "Active partners", value: "2,847", change: "+12%" },
+  { label: "Total revenue", value: "$1.2M", change: "+24%" },
+  { label: "Commission rate", value: "15%", change: "Avg" },
 ]
 
 const trainingModules = [
-  { title: "Product Overview", status: "completed", progress: 100 },
-  { title: "Sales Techniques", status: "in-progress", progress: 65 },
-  { title: "Technical Deep Dive", status: "available", progress: 0 },
-  { title: "Customer Success", status: "available", progress: 0 },
+  { title: "Product overview", status: "completed", progress: 100 },
+  { title: "Sales techniques", status: "in-progress", progress: 65 },
+  { title: "Technical deep dive", status: "available", progress: 0 },
+  { title: "Customer success", status: "available", progress: 0 },
 ]
 
 const marketingAssets = [
-  { name: "Brand Guidelines", type: "PDF", size: "2.4 MB" },
-  { name: "Logo Pack", type: "ZIP", size: "15.8 MB" },
-  { name: "Product Brochure", type: "PDF", size: "3.1 MB" },
-  { name: "Case Studies", type: "PDF", size: "5.2 MB" },
-  { name: "Demo Videos", type: "MP4", size: "247 MB" },
+  { name: "Brand guidelines", type: "PDF", size: "2.4 MB" },
+  { name: "Logo pack", type: "ZIP", size: "15.8 MB" },
+  { name: "Product brochure", type: "PDF", size: "3.1 MB" },
+  { name: "Case studies", type: "PDF", size: "5.2 MB" },
+]
+
+const salesTools = [
+  { title: "Pricing calculator", description: "Generate custom quotes for prospects", cta: "Open tool" },
+  { title: "ROI templates", description: "Show value to potential customers", cta: "Download" },
+  { title: "Lead tracker", description: "Manage your sales pipeline", cta: "Access" },
+  { title: "Performance dashboard", description: "Track your sales metrics", cta: "View" },
 ]
 
 export default function Resellers() {
   return (
-    <div className="container mx-auto px-6 py-8">
-      <div className="mb-8">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 bg-gradient-primary rounded-lg flex items-center justify-center">
-            <Shield className="h-5 w-5 text-white" />
-          </div>
-          <div>
-            <h1 className="text-3xl font-bold">Partner Portal</h1>
-            <p className="text-muted-foreground">Resources, training, and tools for resellers</p>
-          </div>
-        </div>
-        <Badge variant="secondary">Business Resources</Badge>
-      </div>
-
-      {/* Stats Cards */}
-      <div className="grid md:grid-cols-3 gap-6 mb-8">
-        {partnerStats.map((stat, index) => (
-          <Card key={index}>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-muted-foreground">{stat.label}</p>
-                  <p className="text-2xl font-bold">{stat.value}</p>
-                </div>
-                <div className="text-right">
-                  <span className={`text-sm font-medium ${
-                    stat.change.includes('+') ? 'text-green-600' : 'text-muted-foreground'
-                  }`}>
-                    {stat.change}
-                  </span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+    <AptSection
+      spacing="compact"
+      width="wide"
+      eyebrow="Resellers"
+      title="Partner portal"
+      description="Resources, training, and tools for resellers."
+      actions={<AptTag>Partner</AptTag>}
+    >
+      {/* Stats */}
+      <div className="grid md:grid-cols-3 gap-4 mb-8">
+        {partnerStats.map((s) => (
+          <AptCard key={s.label} variant="default" padding="default">
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{s.label}</p>
+            <div className="mt-2 flex items-end justify-between">
+              <p className="text-2xl font-semibold text-foreground">{s.value}</p>
+              <AptTag variant={s.change.includes("+") ? "success" : "muted"}>{s.change}</AptTag>
+            </div>
+          </AptCard>
         ))}
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-8">
-        {/* Main Content */}
-        <div className="lg:col-span-2 space-y-8">
-          {/* Training & Certification */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Award className="h-5 w-5" />
-                Training & Certification
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-6">
-                Complete our training modules to become a certified partner and unlock higher commission rates.
+      <div className="grid lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 space-y-6">
+          <AptCard variant="default">
+            <AptCardHeader>
+              <AptCardTitle className="flex items-center gap-2">
+                <Award className="h-4 w-4 text-muted-foreground" /> Training & certification
+              </AptCardTitle>
+            </AptCardHeader>
+            <AptCardContent className="space-y-3">
+              <p className="text-sm text-muted-foreground leading-relaxed mb-2">
+                Complete training modules to become a certified partner and unlock higher commission rates.
               </p>
-              <div className="space-y-4">
-                {trainingModules.map((module, index) => (
-                  <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <h3 className="font-semibold">{module.title}</h3>
-                        <Badge 
-                          variant={module.status === 'completed' ? 'default' : 
-                                  module.status === 'in-progress' ? 'secondary' : 'outline'}
-                          className="text-xs"
-                        >
-                          {module.status}
-                        </Badge>
+              {trainingModules.map((m) => (
+                <AptCard key={m.title} variant="subtle" padding="dense">
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-2">
+                        <h3 className="text-sm font-medium text-foreground">{m.title}</h3>
+                        <AptTag variant={m.status === "completed" ? "success" : m.status === "in-progress" ? "accent" : "muted"}>
+                          {m.status}
+                        </AptTag>
                       </div>
-                      <div className="w-full bg-muted rounded-full h-2">
-                        <div 
-                          className="bg-primary h-2 rounded-full transition-all" 
-                          style={{ width: `${module.progress}%` }}
-                        ></div>
+                      <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
+                        <div className="h-full bg-accent transition-all duration-default" style={{ width: `${m.progress}%` }} />
                       </div>
                     </div>
-                    <Button 
-                      variant={module.status === 'completed' ? 'outline' : 'default'} 
-                      size="sm" 
-                      className="ml-4"
-                    >
-                      {module.status === 'completed' ? 'Review' : 
-                       module.status === 'in-progress' ? 'Continue' : 'Start'}
+                    <Button variant={m.status === "completed" ? "outline" : "primary"} size="sm">
+                      {m.status === "completed" ? "Review" : m.status === "in-progress" ? "Continue" : "Start"}
                     </Button>
                   </div>
+                </AptCard>
+              ))}
+            </AptCardContent>
+          </AptCard>
+
+          <AptCard variant="default">
+            <AptCardHeader>
+              <AptCardTitle className="flex items-center gap-2">
+                <Target className="h-4 w-4 text-muted-foreground" /> Sales tools & resources
+              </AptCardTitle>
+            </AptCardHeader>
+            <AptCardContent>
+              <div className="grid sm:grid-cols-2 gap-3">
+                {salesTools.map((t) => (
+                  <AptCard key={t.title} variant="interactive" padding="dense">
+                    <h3 className="text-sm font-semibold text-foreground mb-1">{t.title}</h3>
+                    <p className="text-xs text-muted-foreground mb-3 leading-relaxed">{t.description}</p>
+                    <Button size="sm" variant="outline">{t.cta}</Button>
+                  </AptCard>
                 ))}
               </div>
-            </CardContent>
-          </Card>
-
-          {/* Sales Tools */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Target className="h-5 w-5" />
-                Sales Tools & Resources
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid sm:grid-cols-2 gap-4">
-                <div className="p-4 border rounded-lg hover:bg-muted/50 transition-colors">
-                  <h3 className="font-semibold mb-2">💰 Pricing Calculator</h3>
-                  <p className="text-sm text-muted-foreground mb-3">Generate custom quotes for prospects</p>
-                  <Button size="sm" variant="outline">Open Tool</Button>
-                </div>
-                <div className="p-4 border rounded-lg hover:bg-muted/50 transition-colors">
-                  <h3 className="font-semibold mb-2">📊 ROI Templates</h3>
-                  <p className="text-sm text-muted-foreground mb-3">Show value to potential customers</p>
-                  <Button size="sm" variant="outline">Download</Button>
-                </div>
-                <div className="p-4 border rounded-lg hover:bg-muted/50 transition-colors">
-                  <h3 className="font-semibold mb-2">🎯 Lead Tracker</h3>
-                  <p className="text-sm text-muted-foreground mb-3">Manage your sales pipeline</p>
-                  <Button size="sm" variant="outline">Access</Button>
-                </div>
-                <div className="p-4 border rounded-lg hover:bg-muted/50 transition-colors">
-                  <h3 className="font-semibold mb-2">📈 Performance Dashboard</h3>
-                  <p className="text-sm text-muted-foreground mb-3">Track your sales metrics</p>
-                  <Button size="sm" variant="outline">View</Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+            </AptCardContent>
+          </AptCard>
         </div>
 
-        {/* Sidebar */}
-        <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Quick Actions</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <Button className="w-full" variant="gradient">
-                Submit New Lead
-              </Button>
-              <Button variant="outline" className="w-full">
-                Request Demo Access
-              </Button>
-              <Button variant="outline" className="w-full">
-                Partner Support
-              </Button>
-            </CardContent>
-          </Card>
+        <aside className="space-y-6">
+          <AptCard variant="feature">
+            <AptCardHeader>
+              <AptCardTitle className="text-base">Quick actions</AptCardTitle>
+            </AptCardHeader>
+            <AptCardContent className="space-y-2">
+              <Button variant="accent" className="w-full">Submit new lead</Button>
+              <Button variant="outline" className="w-full">Request demo access</Button>
+              <Button variant="outline" className="w-full">Partner support</Button>
+            </AptCardContent>
+          </AptCard>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                <FileText className="h-4 w-4" />
-                Marketing Assets
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {marketingAssets.map((asset, index) => (
-                <div key={index} className="flex items-center justify-between p-2 hover:bg-muted/50 rounded transition-colors">
-                  <div className="flex-1">
-                    <p className="font-medium text-sm">{asset.name}</p>
-                    <p className="text-xs text-muted-foreground">{asset.type} • {asset.size}</p>
+          <AptCard variant="subtle">
+            <AptCardHeader>
+              <AptCardTitle className="text-base flex items-center gap-2">
+                <FileText className="h-4 w-4" /> Marketing assets
+              </AptCardTitle>
+            </AptCardHeader>
+            <AptCardContent className="space-y-1">
+              {marketingAssets.map((a) => (
+                <div key={a.name} className="flex items-center justify-between rounded-md px-2 py-2 hover:bg-secondary transition-colors duration-fast">
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-foreground truncate">{a.name}</p>
+                    <p className="text-xs text-muted-foreground">{a.type} • {a.size}</p>
                   </div>
-                  <Button size="sm" variant="ghost" className="p-1">
+                  <Button size="icon" variant="ghost" aria-label={`Download ${a.name}`}>
                     <Download className="h-4 w-4" />
                   </Button>
                 </div>
               ))}
-            </CardContent>
-          </Card>
+            </AptCardContent>
+          </AptCard>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                <TrendingUp className="h-4 w-4" />
-                This Month
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-sm">Leads Generated</span>
-                  <span className="font-medium">24</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm">Closed Deals</span>
-                  <span className="font-medium">7</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm">Commission Earned</span>
-                  <span className="font-medium">$4,250</span>
-                </div>
+          <AptCard variant="default">
+            <AptCardHeader>
+              <AptCardTitle className="text-base flex items-center gap-2">
+                <TrendingUp className="h-4 w-4" /> This month
+              </AptCardTitle>
+            </AptCardHeader>
+            <AptCardContent className="space-y-2.5">
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Leads generated</span>
+                <span className="font-medium text-foreground">24</span>
               </div>
-            </CardContent>
-          </Card>
-        </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Closed deals</span>
+                <span className="font-medium text-foreground">7</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Commission earned</span>
+                <span className="font-medium text-foreground">$4,250</span>
+              </div>
+            </AptCardContent>
+          </AptCard>
+        </aside>
       </div>
-    </div>
+    </AptSection>
   )
 }

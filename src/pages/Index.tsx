@@ -1,167 +1,142 @@
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { ArrowRight, Book, Code, Users, Zap, Search, FileText, MessageCircle } from "lucide-react"
 import { Link } from "react-router-dom"
-// Removing image import for now to test if it's causing the issue
-// import heroImage from "@/assets/hero-docs.jpg"
+import { ArrowRight, Code, Users, Shield, Search, BookOpen, FileText, MessageCircle, Zap } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { AptSection } from "@/components/apt/AptSection"
+import { AptCard, AptCardHeader, AptCardTitle, AptCardDescription, AptCardContent } from "@/components/apt/AptCard"
+import { AptTag } from "@/components/apt/AptTag"
 
-const audienceCards = [
+const audiences = [
   {
     title: "Developers",
-    description: "APIs, SDKs, and integration guides to build powerful applications",
+    description: "APIs, SDKs, and integration guides for building on the platform.",
     icon: Code,
     href: "/developers",
-    features: ["REST API Reference", "SDKs & Libraries", "Code Examples", "Webhooks"],
-    badge: "Technical"
+    features: ["REST API reference", "SDKs & libraries", "Code examples", "Webhooks"],
+    eyebrow: "Technical",
   },
   {
-    title: "Customers", 
-    description: "User guides, tutorials, and help articles for end users",
+    title: "Customers",
+    description: "Guides, tutorials, and help articles for end users.",
     icon: Users,
     href: "/customers",
-    features: ["Getting Started", "Feature Guides", "Troubleshooting", "Best Practices"],
-    badge: "User-Friendly"
+    features: ["Getting started", "Feature guides", "Troubleshooting", "Best practices"],
+    eyebrow: "User",
   },
   {
     title: "Resellers",
-    description: "Partner resources, training materials, and business tools",
-    icon: Zap,
+    description: "Partner resources, training materials, and business tools.",
+    icon: Shield,
     href: "/resellers",
-    features: ["Partner Portal", "Training Materials", "Marketing Assets", "Support Tools"],
-    badge: "Business"
-  }
+    features: ["Partner portal", "Training", "Marketing assets", "Support tools"],
+    eyebrow: "Partner",
+  },
 ]
 
 const quickLinks = [
-  { title: "Getting Started", href: "/getting-started", icon: Book },
-  { title: "API Reference", href: "/api", icon: FileText },
+  { title: "Getting started", href: "/getting-started", icon: BookOpen },
+  { title: "API reference", href: "/api", icon: FileText },
   { title: "FAQ", href: "/faq", icon: MessageCircle },
-  { title: "Contact Support", href: "/support", icon: MessageCircle },
+  { title: "Status", href: "/status", icon: Zap },
 ]
 
-const Index = () => {
+export default function Index() {
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-hero">
-        <div className="absolute inset-0 bg-black/20"></div>
-        {/* Temporarily removing background image to debug */}
-        <div className="absolute inset-0 bg-gradient-primary opacity-20"></div>
-        <div className="relative container mx-auto px-6 py-20 text-center text-white">
-          <h1 className="text-5xl md:text-6xl font-bold mb-6">
-            Documentation & Support Center
-          </h1>
-          <p className="text-xl md:text-2xl mb-8 text-white/90 max-w-3xl mx-auto">
-            Everything you need to build, integrate, and succeed with our platform. 
-            Find guides, references, and support tailored to your role.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button variant="hero" size="lg" asChild>
-              <Link to="/getting-started">
-                Get Started <ArrowRight className="ml-2 h-5 w-5" />
-              </Link>
-            </Button>
-            <Button variant="outline" size="lg" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
-              Browse Documentation
-            </Button>
-          </div>
-        </div>
-      </section>
+      {/* Hero — single per view */}
+      <AptSection spacing="default" tone="subtle" width="wide" className="border-b border-border">
+        <AptCard variant="hero" padding="feature" className="overflow-hidden">
+          <div className="flex flex-col gap-6 max-w-3xl">
+            <AptTag variant="accent" className="self-start">Documentation</AptTag>
+            <h1 className="text-4xl md:text-5xl font-semibold tracking-tight text-foreground">
+              Everything you need to build, integrate, and succeed.
+            </h1>
+            <p className="text-lg text-muted-foreground leading-relaxed">
+              A single source of truth for developers, customers, and partners. Find guides,
+              references, and support tailored to your role.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button variant="accent" size="lg" asChild>
+                <Link to="/getting-started">
+                  Get started <ArrowRight className="ml-1 h-4 w-4" />
+                </Link>
+              </Button>
+              <Button variant="outline" size="lg" asChild>
+                <Link to="/developers">Browse documentation</Link>
+              </Button>
+            </div>
 
-      {/* Search Section */}
-      <section className="py-12 bg-gradient-card border-b">
-        <div className="container mx-auto px-6">
-          <div className="max-w-2xl mx-auto">
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+            {/* Search */}
+            <div className="relative mt-4 max-w-xl">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <input
                 type="text"
-                placeholder="Search documentation, guides, and articles..."
-                className="w-full pl-12 pr-4 py-4 border border-input rounded-xl bg-background text-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-soft"
+                placeholder="Search documentation, guides, and articles…"
+                className="w-full h-11 rounded-md border border-border bg-card pl-10 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-colors duration-fast"
               />
             </div>
           </div>
-        </div>
-      </section>
+        </AptCard>
+      </AptSection>
 
-      {/* Audience Selection */}
-      <section className="py-16">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Choose Your Path</h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Select your role to access tailored documentation and resources
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {audienceCards.map((card) => (
-              <Card key={card.title} className="group hover:shadow-large transition-all duration-300 hover:-translate-y-2 bg-gradient-card border-0">
-                <CardHeader className="text-center pb-4">
-                  <div className="flex justify-center mb-4">
-                    <div className="w-16 h-16 bg-gradient-primary rounded-2xl flex items-center justify-center group-hover:shadow-glow transition-all duration-300">
-                      <card.icon className="h-8 w-8 text-white" />
-                    </div>
+      {/* Audience selection */}
+      <AptSection
+        spacing="default"
+        eyebrow="Choose your path"
+        title="Documentation for every role"
+        description="Select your role to access tailored documentation and resources."
+      >
+        <div className="grid md:grid-cols-3 gap-6">
+          {audiences.map((card) => (
+            <AptCard key={card.title} variant="interactive" padding="default" asChild={false}>
+              <Link to={card.href} className="block h-full">
+                <div className="flex items-center justify-between mb-5">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-md border border-border bg-secondary text-foreground">
+                    <card.icon className="h-5 w-5" />
                   </div>
-                  <div className="flex justify-center mb-2">
-                    <Badge variant="secondary" className="text-xs">
-                      {card.badge}
-                    </Badge>
-                  </div>
-                  <CardTitle className="text-2xl mb-2">{card.title}</CardTitle>
-                  <CardDescription className="text-base">{card.description}</CardDescription>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <ul className="space-y-2 mb-6">
-                    {card.features.map((feature) => (
-                      <li key={feature} className="flex items-center text-sm text-muted-foreground">
-                        <div className="w-1.5 h-1.5 bg-primary rounded-full mr-2"></div>
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-                  <Button variant="gradient" className="w-full" asChild>
-                    <Link to={card.href}>
-                      Explore {card.title} <ArrowRight className="ml-2 h-4 w-4" />
-                    </Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                  <AptTag variant="muted">{card.eyebrow}</AptTag>
+                </div>
+                <h3 className="text-lg font-semibold text-foreground mb-1.5">{card.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed mb-5">{card.description}</p>
+                <ul className="space-y-2 mb-6">
+                  {card.features.map((feature) => (
+                    <li key={feature} className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <span className="h-1 w-1 rounded-full bg-muted-foreground/60" />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+                <span className="inline-flex items-center gap-1 text-sm font-medium text-accent">
+                  Explore {card.title} <ArrowRight className="h-3.5 w-3.5" />
+                </span>
+              </Link>
+            </AptCard>
+          ))}
         </div>
-      </section>
+      </AptSection>
 
-      {/* Quick Links */}
-      <section className="py-16 bg-muted/30">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Quick Access</h2>
-            <p className="text-lg text-muted-foreground">
-              Jump directly to commonly used resources
-            </p>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto">
-            {quickLinks.map((link) => (
-              <Card key={link.title} className="group hover:shadow-medium transition-all duration-300 bg-background border-0">
-                <CardContent className="p-6 text-center">
-                  <link.icon className="h-8 w-8 mx-auto mb-3 text-primary group-hover:scale-110 transition-transform" />
-                  <h3 className="font-semibold mb-2">{link.title}</h3>
-                  <Button variant="ghost" size="sm" asChild className="text-primary">
-                    <Link to={link.href}>
-                      View <ArrowRight className="ml-1 h-3 w-3" />
-                    </Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+      {/* Quick access */}
+      <AptSection
+        spacing="compact"
+        tone="subtle"
+        eyebrow="Quick access"
+        title="Jump to common resources"
+      >
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {quickLinks.map((link) => (
+            <AptCard key={link.title} variant="interactive" padding="default" asChild={false}>
+              <Link to={link.href} className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-md border border-border bg-card text-foreground">
+                  <link.icon className="h-4 w-4" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-foreground">{link.title}</p>
+                </div>
+                <ArrowRight className="h-4 w-4 text-muted-foreground" />
+              </Link>
+            </AptCard>
+          ))}
         </div>
-      </section>
+      </AptSection>
     </div>
-  );
-};
-
-export default Index;
+  )
+}

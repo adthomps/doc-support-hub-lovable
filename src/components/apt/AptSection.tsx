@@ -32,7 +32,7 @@ const widthClasses = {
 } as const
 
 export interface AptSectionProps
-  extends React.HTMLAttributes<HTMLElement>,
+  extends Omit<React.HTMLAttributes<HTMLElement>, "title">,
     VariantProps<typeof sectionVariants> {
   width?: keyof typeof widthClasses
   eyebrow?: React.ReactNode
