@@ -5,34 +5,34 @@ import { AptCard, AptCardHeader, AptCardTitle, AptCardContent } from "@/componen
 import { AptTag } from "@/components/apt/AptTag"
 
 const popularGuides = [
-  { title: "Getting started guide", views: "12.5k", rating: 4.9, time: "5 min read" },
-  { title: "Account settings", views: "8.2k", rating: 4.8, time: "3 min read" },
-  { title: "Billing & payments", views: "6.1k", rating: 4.7, time: "4 min read" },
-  { title: "Privacy settings", views: "4.3k", rating: 4.6, time: "2 min read" },
+  { title: "Onboarding your business", views: "9.8k", rating: 4.9, time: "6 min read" },
+  { title: "Accepting payments", views: "7.4k", rating: 4.8, time: "5 min read" },
+  { title: "Managing payouts", views: "5.2k", rating: 4.7, time: "4 min read" },
+  { title: "Handling disputes & chargebacks", views: "3.9k", rating: 4.6, time: "7 min read" },
 ]
 
 const videoTutorials = [
-  { title: "Platform overview", duration: "12:34" },
-  { title: "Advanced features", duration: "18:45" },
-  { title: "Mobile app guide", duration: "8:22" },
+  { title: "Merchant dashboard tour", duration: "10:12" },
+  { title: "Setting up payouts", duration: "7:45" },
+  { title: "Resolving a dispute", duration: "9:08" },
 ]
 
 const categories = [
-  { title: "Getting started", description: "Setup and initial configuration", count: 15 },
-  { title: "Account management", description: "Profile, settings, and preferences", count: 23 },
-  { title: "Billing & payments", description: "Subscriptions, invoices, payments", count: 12 },
-  { title: "Troubleshooting", description: "Common issues and solutions", count: 18 },
+  { title: "Onboarding & KYC", description: "Verification, business profile, compliance", count: 14 },
+  { title: "Payments & payouts", description: "Acceptance, settlement, schedules", count: 21 },
+  { title: "Billing & invoicing", description: "Invoices, subscriptions, taxes", count: 16 },
+  { title: "Disputes & risk", description: "Chargebacks, fraud signals, appeals", count: 11 },
 ]
 
-export default function Customers() {
+export default function Businesses() {
   return (
     <AptSection
       spacing="compact"
       width="wide"
-      eyebrow="Customers"
-      title="Help center"
-      description="User guides, tutorials, and support articles."
-      actions={<AptTag>User</AptTag>}
+      eyebrow="Businesses"
+      title="Business & merchant hub"
+      description="Operational guides for merchants and business users — onboarding, payments, billing, and dispute handling."
+      actions={<AptTag>Merchant</AptTag>}
     >
       <div className="grid lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
@@ -120,12 +120,12 @@ export default function Customers() {
             </AptCardHeader>
             <AptCardContent className="space-y-3">
               <div>
-                <p className="text-sm font-medium text-foreground">How do I reset my password?</p>
-                <p className="text-xs text-muted-foreground mt-0.5">Click "Forgot password" on the login page…</p>
+                <p className="text-sm font-medium text-foreground">When do payouts arrive?</p>
+                <p className="text-xs text-muted-foreground mt-0.5">Standard payouts settle in 2 business days…</p>
               </div>
               <div>
-                <p className="text-sm font-medium text-foreground">How do I cancel my subscription?</p>
-                <p className="text-xs text-muted-foreground mt-0.5">Go to Account settings &gt; Billing…</p>
+                <p className="text-sm font-medium text-foreground">How do I respond to a dispute?</p>
+                <p className="text-xs text-muted-foreground mt-0.5">Open the dispute, attach evidence, submit…</p>
               </div>
               <Button variant="ghost" size="sm" className="w-full">View all FAQs</Button>
             </AptCardContent>
@@ -137,13 +137,13 @@ export default function Customers() {
             </AptCardHeader>
             <AptCardContent className="space-y-2">
               <Button variant="outline" className="w-full justify-between">
-                Mobile app (iOS) <span className="text-xs text-muted-foreground">v2.1.0</span>
+                Merchant app (iOS) <span className="text-xs text-muted-foreground">v2.1.0</span>
               </Button>
               <Button variant="outline" className="w-full justify-between">
-                Mobile app (Android) <span className="text-xs text-muted-foreground">v2.1.0</span>
+                Merchant app (Android) <span className="text-xs text-muted-foreground">v2.1.0</span>
               </Button>
               <Button variant="outline" className="w-full justify-between">
-                Desktop app <span className="text-xs text-muted-foreground">v1.5.2</span>
+                Desktop dashboard <span className="text-xs text-muted-foreground">v1.5.2</span>
               </Button>
             </AptCardContent>
           </AptCard>
