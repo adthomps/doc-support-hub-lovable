@@ -28,7 +28,7 @@ import {
 
 const audienceItems = [
   { title: "Developers", url: "/developers", icon: Code, description: "APIs, SDKs & Integration" },
-  { title: "Customers", url: "/customers", icon: Users, description: "User Guides & Tutorials" },
+  { title: "Businesses", url: "/businesses", icon: Users, description: "Merchant guides & operations" },
   { title: "Resellers", url: "/resellers", icon: Shield, description: "Partner Resources" },
 ]
 
