@@ -87,7 +87,7 @@ export default function Index() {
       >
         <div className="grid md:grid-cols-3 gap-6">
           {audiences.map((card) => (
-            <AptCard key={card.title} variant="interactive" padding="default" asChild={false}>
+            <AptCard key={card.title} variant="interactive" padding="default">
               <Link to={card.href} className="block h-full">
                 <div className="flex items-center justify-between mb-5">
                   <div className="flex h-10 w-10 items-center justify-center rounded-md border border-border bg-secondary text-foreground">
@@ -123,7 +123,7 @@ export default function Index() {
       >
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {quickLinks.map((link) => (
-            <AptCard key={link.title} variant="interactive" padding="default" asChild={false}>
+            <AptCard key={link.title} variant="interactive" padding="default">
               <Link to={link.href} className="flex items-center gap-3">
                 <div className="flex h-9 w-9 items-center justify-center rounded-md border border-border bg-card text-foreground">
                   <link.icon className="h-4 w-4" />
