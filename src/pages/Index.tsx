@@ -15,12 +15,12 @@ const audiences = [
     eyebrow: "Technical",
   },
   {
-    title: "Customers",
-    description: "Guides, tutorials, and help articles for end users.",
+    title: "Businesses",
+    description: "Operational guides for merchants — onboarding, payments, payouts, and disputes.",
     icon: Users,
-    href: "/customers",
-    features: ["Getting started", "Feature guides", "Troubleshooting", "Best practices"],
-    eyebrow: "User",
+    href: "/businesses",
+    features: ["Onboarding & KYC", "Payments & payouts", "Billing & invoicing", "Disputes & risk"],
+    eyebrow: "Merchant",
   },
   {
     title: "Resellers",
