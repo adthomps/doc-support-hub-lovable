@@ -2,7 +2,7 @@ import { Link } from "react-router-dom"
 import { ArrowRight, Code, Users, Shield, Search, BookOpen, FileText, MessageCircle, Zap } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { AptSection } from "@/components/apt/AptSection"
-import { AptCard, AptCardHeader, AptCardTitle, AptCardDescription, AptCardContent } from "@/components/apt/AptCard"
+import { AptCard } from "@/components/apt/AptCard"
 import { AptTag } from "@/components/apt/AptTag"
 
 const audiences = [

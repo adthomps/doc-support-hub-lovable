@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Code, FileText, Zap, ExternalLink, Copy, Check } from "lucide-react"
+import { FileText, Zap, ExternalLink, Copy, Check } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { AptSection } from "@/components/apt/AptSection"
 import { AptCard, AptCardHeader, AptCardTitle, AptCardContent } from "@/components/apt/AptCard"
