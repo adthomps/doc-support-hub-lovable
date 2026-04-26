@@ -46,7 +46,25 @@ export default function Support() {
   const [params] = useSearchParams()
   const presetCategory = params.get("category") ?? ""
   const initialCategory = (validCategories as readonly string[]).includes(presetCategory) ? presetCategory : ""
+  const initialTab = params.get("tab") === "lookup" ? "lookup" : "new"
   const [submitted, setSubmitted] = useState<{ email: string } | null>(null)
+
+  // Ticket lookup state
+  const [lookupQuery, setLookupQuery] = useState("")
+  const [lookupSubmitted, setLookupSubmitted] = useState(false)
+  const lookupResults = useMemo<Ticket[]>(
+    () => (lookupSubmitted ? findTickets(lookupQuery) : []),
+    [lookupSubmitted, lookupQuery]
+  )
+  const submitLookup = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!lookupQuery.trim()) {
+      toast.error("Enter a ticket ID or email to look up")
+      return
+    }
+    setLookupSubmitted(true)
+  }
+  const fmt = (iso: string) => new Date(iso).toLocaleString()
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
