@@ -50,8 +50,6 @@ function Block({ b }: { b: ArticleBlock }) {
 
 export default function Article() {
   const { audience, slug } = useParams<{ audience: string; slug: string }>()
-  const [voted, setVoted] = useState<"up" | "down" | null>(null)
-
   const validAudiences: Audience[] = ["developers", "businesses", "resellers"]
   if (!audience || !validAudiences.includes(audience as Audience)) {
     return <Navigate to="/" replace />
