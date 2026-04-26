@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom"
-import { ArrowRight, Code, Users, Shield, Search, BookOpen, FileText, MessageCircle, Zap } from "lucide-react"
+import { ArrowRight, Code, Users, Shield, BookOpen, FileText, MessageCircle, Zap, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { AptSection } from "@/components/apt/AptSection"
 import { AptCard } from "@/components/apt/AptCard"
 import { AptTag } from "@/components/apt/AptTag"
+import { releases, kindVariant } from "@/content/changelog"
 
 const audiences = [
   {
@@ -40,9 +41,11 @@ const quickLinks = [
 ]
 
 export default function Index() {
+  const latest = releases.slice(0, 3)
+
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero — single per view */}
+      {/* Hero */}
       <AptSection spacing="default" tone="subtle" width="wide" className="border-b border-border">
         <AptCard variant="hero" padding="feature" className="overflow-hidden">
           <div className="flex flex-col gap-6 max-w-3xl">
@@ -51,7 +54,7 @@ export default function Index() {
               Everything you need to build, integrate, and succeed.
             </h1>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              A single source of truth for developers, customers, and partners. Find guides,
+              A single source of truth for developers, merchants, and partners. Find guides,
               references, and support tailored to your role.
             </p>
             <div className="flex flex-col sm:flex-row gap-3">
@@ -64,16 +67,9 @@ export default function Index() {
                 <Link to="/developers">Browse documentation</Link>
               </Button>
             </div>
-
-            {/* Search */}
-            <div className="relative mt-4 max-w-xl">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <input
-                type="text"
-                placeholder="Search documentation, guides, and articles…"
-                className="w-full h-11 rounded-md border border-border bg-card pl-10 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring transition-colors duration-fast"
-              />
-            </div>
+            <p className="text-xs text-muted-foreground">
+              Tip: press <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px]">⌘K</kbd> anywhere to search.
+            </p>
           </div>
         </AptCard>
       </AptSection>
@@ -133,6 +129,31 @@ export default function Index() {
                 </div>
                 <ArrowRight className="h-4 w-4 text-muted-foreground" />
               </Link>
+            </AptCard>
+          ))}
+        </div>
+      </AptSection>
+
+      {/* What's new */}
+      <AptSection
+        spacing="compact"
+        eyebrow="What's new"
+        title="Latest platform updates"
+        actions={
+          <Button variant="outline" size="sm" asChild>
+            <Link to="/changelog">View all <ArrowRight className="ml-1 h-3.5 w-3.5" /></Link>
+          </Button>
+        }
+      >
+        <div className="grid md:grid-cols-3 gap-4">
+          {latest.map((r) => (
+            <AptCard key={r.version} variant="default" padding="default">
+              <div className="flex items-center gap-2 mb-3">
+                <AptTag variant={kindVariant[r.kind]}>{r.kind}</AptTag>
+                <span className="text-xs font-mono text-muted-foreground">{r.version}</span>
+              </div>
+              <h3 className="text-sm font-semibold text-foreground mb-1.5 leading-snug">{r.title}</h3>
+              <p className="text-xs text-muted-foreground">{r.date}</p>
             </AptCard>
           ))}
         </div>

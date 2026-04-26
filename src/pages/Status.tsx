@@ -1,67 +1,20 @@
 import { useMemo } from "react"
 import { AptSection } from "@/components/apt/AptSection"
 import { AptCard, AptCardHeader, AptCardTitle, AptCardContent } from "@/components/apt/AptCard"
-import { AptTag, type AptTagProps } from "@/components/apt/AptTag"
+import { AptTag } from "@/components/apt/AptTag"
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
+import { services, statusVariant, statusLabel, incidents, type ServiceStatus } from "@/content/status"
 
-type Status = "operational" | "degraded" | "down"
-
-const services: { name: string; status: Status }[] = [
-  { name: "API", status: "operational" },
-  { name: "Dashboard", status: "operational" },
-  { name: "Webhooks", status: "operational" },
-  { name: "Payments", status: "degraded" },
-  { name: "Auth", status: "operational" },
-  { name: "Docs", status: "operational" },
-]
-
-const statusVariant: Record<Status, AptTagProps["variant"]> = {
-  operational: "success",
-  degraded: "warning",
-  down: "warning",
-}
-
-const statusLabel: Record<Status, string> = {
-  operational: "Operational",
-  degraded: "Degraded",
-  down: "Outage",
-}
-
-const incidents = [
-  {
-    id: "i-1",
-    title: "Elevated latency on Payments API",
-    date: "2025-04-15",
-    status: "Investigating",
-    body: "We are observing intermittent latency on /v1/charges. Engineers are investigating; no failed transactions detected.",
-  },
-  {
-    id: "i-2",
-    title: "Webhook delivery delays — resolved",
-    date: "2025-04-10",
-    status: "Resolved",
-    body: "A queue backlog caused up to 6 minute delivery delays. All webhooks were delivered. Root cause: noisy neighbor on the queue worker fleet.",
-  },
-  {
-    id: "i-3",
-    title: "Dashboard login failures — resolved",
-    date: "2025-04-02",
-    status: "Resolved",
-    body: "Dashboard SSO failed for a subset of users for 12 minutes. Mitigated by failover.",
-  },
-]
-
-function Sparkline({ status }: { status: Status }) {
+function Sparkline({ status }: { status: ServiceStatus }) {
   const bars = useMemo(() => {
     return Array.from({ length: 60 }, (_, i) => {
-      // mostly operational; some degraded for the degraded service
-      if (status === "degraded" && (i === 18 || i === 19 || i === 41)) return "degraded" as Status
-      return "operational" as Status
+      if (status === "degraded" && (i === 18 || i === 19 || i === 41)) return "degraded" as ServiceStatus
+      return "operational" as ServiceStatus
     })
   }, [status])
 
