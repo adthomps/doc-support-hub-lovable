@@ -1,85 +1,102 @@
-
-
 ## Goal
-1. Rename "Customers" → "Businesses / Merchants" across the app.
-2. Flesh out the POC with real, interactive content on the currently-stubbed routes so reviewers can click through a meaningful experience.
 
----
+Take the POC from "every top-level route renders something" to "every link goes somewhere meaningful, every page has complete states, and the experience aligns with APT design principles." No new design tokens.
 
-## Part 1 — Rename Customers → Businesses/Merchants
+## Audit — what's missing today
 
-**Label:** "Businesses" (primary nav label, concise) with subtitle "Merchants & business users"
-**Route:** `/businesses` (redirect `/customers` → `/businesses` to avoid breaking links)
-**Audience tag:** "Merchant"
+**Dead links / no terminal pages:**
+- Audience hubs (Developers, Businesses, Resellers) list "Popular guides", "Categories", "Video tutorials", "API topics", "Marketing assets", "SDK buttons", "Quick FAQ → View all" — none of these are clickable to a real article/detail.
+- Businesses sidebar buttons (Contact support, Live chat, Community forum, Downloads) are not wired.
+- Resellers sidebar (Submit lead, Request demo, Partner support, Marketing asset downloads, Training Start/Continue) are not wired.
+- Header "Visit app", "Notifications", "GitHub" are decorative only.
+- Sidebar still has its own non-functional `<input>` search instead of opening the command palette.
+- Index hero search input does not open the command palette.
 
-Files to update:
-- `src/pages/Customers.tsx` → rename to `src/pages/Businesses.tsx`; update copy (eyebrow "Businesses", title "Business & merchant hub", description aligned to merchant ops: onboarding, billing, account, dispute handling).
-- `src/App.tsx` — replace `/customers` route with `/businesses`, keep `/customers` as a redirect to `/businesses`, import renamed component.
-- `src/components/AppSidebar.tsx` — update `audienceItems` entry (title, url, description "Merchant guides & operations").
-- `src/pages/Index.tsx` — update audiences card (title, href, description, eyebrow "Merchant").
+**APT design-principle gaps (per `design.md`):**
+- "Complete states are required" — no empty/loading/error states on lists, search, or forms beyond Faq's empty hint.
+- No breadcrumbs / location signal on subpages.
+- No 404 styling consistent with APT (NotFound is default scaffold).
+- Index page shows the older hero + audience grid pattern; per APT "structure over decoration", trim hero to a single clear value statement and remove the redundant non-functional hero search (palette already in header).
+- Footer is missing — no global location for principles, version, status link.
 
-Content tweaks on the page itself (still card-based, APT compliant):
-- Popular guides → merchant-flavored: "Onboarding your business", "Accepting payments", "Managing payouts", "Handling disputes & chargebacks".
-- Categories → "Onboarding & KYC", "Payments & payouts", "Billing & invoicing", "Disputes & risk".
-- FAQ → merchant-relevant questions.
+**Content gaps:**
+- No actual documentation articles. Everything is a list pointing nowhere.
+- Changelog/API/Status are interactive but isolated; no cross-links from audience hubs.
 
----
+## Plan
 
-## Part 2 — Flesh out POC for richer click-through
+### 1. New: generic Article route + content registry
+- Add `src/content/articles.ts` — typed registry of ~12 mock articles (4 per audience): id, slug, audience, title, summary, readTime, body (markdown-ish string rendered as styled paragraphs/lists/code).
+- Add `src/pages/Article.tsx` — renders one article by slug, with breadcrumbs (Home › {Audience} › {Title}), AptTag for audience, "Was this helpful?" footer, "Related articles" sidebar (3 from same audience), "Need help? → /support" CTA.
+- Route: `/:audience/articles/:slug` in `App.tsx` (audience ∈ developers|businesses|resellers, validated in the page).
+- Wire all "Popular guides", "Categories" (category opens an index list), and "API topics" cards on the three audience hubs to real article slugs.
 
-Currently `/getting-started`, `/api`, `/changelog`, `/faq`, `/support`, `/status` all render the same `ComingSoon` placeholder. Build real, interactive content for each using existing APT primitives (no new design tokens).
+### 2. New: Category index pages (lightweight)
+- Add `src/pages/CategoryIndex.tsx` — route `/:audience/category/:categorySlug`. Lists articles in that category with empty-state when none.
+- Wire category cards on Businesses/Developers/Resellers to this route.
 
-### A. `/getting-started` — Getting Started
-- Audience selector (3 interactive cards: Developer / Merchant / Reseller) that filters the steps shown below.
-- Numbered step list (5 steps) with checkbox state stored in `localStorage` for progress persistence.
-- Progress bar at top reflecting completion %.
-- Sidebar: "What's next" links into Developers/Businesses/Resellers pages.
+### 3. New: Breadcrumbs primitive
+- Add `src/components/apt/AptBreadcrumbs.tsx` (wraps shadcn `breadcrumb`) — used in Layout above each subpage main content based on route segments + a small route-title map.
 
-### B. `/api` — API Reference
-- Searchable endpoint list (client-side filter input).
-- Grouped sections: Auth, Users, Payments, Webhooks (use `accordion.tsx`).
-- Each endpoint row: HTTP method tag (AptTag color by verb), path, short description.
-- Right-side detail panel for the selected endpoint with example request/response (reuse code-block pattern from `Developers.tsx`).
+### 4. Layout + global polish
+- `Layout.tsx`: render `<AptBreadcrumbs />` between Header and `<main>` (skip on `/`).
+- `Header.tsx`: remove "Visit app" decorative button OR link it to `/` ; keep Notifications/GitHub but make GitHub link to the APT principles repo (https://github.com/adthomps/apt-principles), Notifications opens a popover with "No new notifications" empty state.
+- `AppSidebar.tsx`: replace the raw `<input>` with a button that opens the command palette (lift palette state to Layout via context or simple shared `useState` + provider; simplest = move palette open state into a tiny `useCommandPalette` hook with module-level event bus, or pass via `Layout` → both Header and Sidebar). Cleanest: add `src/hooks/useCommandPalette.tsx` (Context provider) wrapping Layout; Header/Sidebar both consume.
+- `Index.tsx`: remove the inline hero search (palette is global). Tighten copy. Add a "What's new" strip below quick-access pulling latest 3 changelog entries (import shared changelog data — see #5).
 
-### C. `/changelog` — Changelog
-- Vertical timeline of 6–8 mock releases (version, date, AptTag for "Feature"/"Fix"/"Breaking").
-- Filter chips (All / Features / Fixes / Breaking) using AptTag interactive state.
-- Each entry expandable (accordion) for full notes.
+### 5. Extract shared mock data
+- Move `releases` out of `Changelog.tsx` into `src/content/changelog.ts` so Index can import latest 3.
+- Move `services`/`incidents` out of `Status.tsx` into `src/content/status.ts` (Status page imports; Header status dot can read overall status from same source — future use).
 
-### D. `/faq` — FAQ
-- Tabs by audience: Developers / Businesses / Resellers (use `tabs.tsx`).
-- Accordion of 6–8 Q&A per tab.
-- Search input filtering across all tabs.
-- Sidebar: "Still need help?" CTA to `/support`.
+### 6. Footer
+- Add `src/components/Footer.tsx` (rendered in Layout): three columns — Product (links to audience hubs), Resources (Getting Started, API, Changelog), Support (FAQ, Support, Status) — plus a bottom row with "Built on APT principles" linking to the GitHub repo and a small status indicator pulling from `status.ts`.
 
-### E. `/support` — Contact Support
-- Contact form (Name, Email, Category select, Subject, Message) using `form.tsx` + `react-hook-form` + `zod` (already in deps). Submit shows toast success and clears form (no backend — POC only).
-- Sidebar cards: response time SLA, alternative channels (community, email), link to status page.
+### 7. Complete states (per APT design rule #4)
+- API reference: empty state when search yields nothing (already partial — keep).
+- Article: 404 fallback when slug not found → reuse `EmptyState` with link back to audience hub.
+- Category index: empty state when category has no articles.
+- Support form: success state already shown via toast; add a visible inline confirmation card after submit (auto-dismiss after 8s) for users who miss the toast.
+- NotFound: rebuild with `EmptyState` + APT styling, links to Home / Search (opens palette) / Support.
 
-### F. `/status` — System Status
-- Overall status banner ("All systems operational" with success dot).
-- List of 6 services (API, Dashboard, Webhooks, Payments, Auth, Docs) each with status AptTag (operational/degraded/down) and 90-day uptime sparkline (simple CSS bar row, no chart lib).
-- Recent incidents list (3 mock entries, expandable).
+### 8. Wire remaining dead actions (no backend, just UX)
+- Businesses sidebar: Contact support → `/support`; Live chat → toast "Live chat coming soon"; Community forum → toast; Downloads buttons → toast "Download starting…".
+- Resellers sidebar: Submit lead/Request demo/Partner support → all link to `/support` with prefilled `?category=partner` (read in Support page to default the Select).
+- Resellers training Start/Continue/Review → toast "Module opening…" (POC scope).
+- Marketing asset download buttons → toast.
 
-### G. Global polish
-- Header search → make it focusable with a `Cmd/Ctrl+K` hint badge (visual only for POC, opens a simple `command.tsx` palette listing all routes).
-- Sidebar search → wire to same command palette trigger.
-- Index hero search → also opens command palette on focus.
+### 9. APT alignment touches
+- Verify all pages use `AptSection` + `AptCard` (already true).
+- Add `aria-label` on icon-only buttons that are missing them (audit pass).
+- Confirm no decorative gradients/glows (memory rule). Currently clean — keep.
 
----
+## Files (summary)
 
-## Technical notes
-- All new pages use `AptSection` + `AptCard` variants per spec; no raw colors, only semantic tokens.
-- Reuse existing shadcn components: `accordion`, `tabs`, `form`, `input`, `select`, `command`, `dialog`, `sonner` (toast).
-- Persist `getting-started` checkbox state in `localStorage` only — no backend.
-- All mock data lives inline in each page file (POC scope).
-- No changes to design tokens, `tailwind.config.ts`, or `index.css`.
+**New:**
+- `src/content/articles.ts`
+- `src/content/changelog.ts`
+- `src/content/status.ts`
+- `src/components/apt/AptBreadcrumbs.tsx`
+- `src/components/Footer.tsx`
+- `src/hooks/useCommandPalette.tsx`
+- `src/pages/Article.tsx`
+- `src/pages/CategoryIndex.tsx`
 
-## Files touched (summary)
-- Rename: `src/pages/Customers.tsx` → `src/pages/Businesses.tsx`
-- Edit: `src/App.tsx`, `src/components/AppSidebar.tsx`, `src/pages/Index.tsx`
-- Replace stub usage: `src/pages/GettingStarted.tsx`, `src/pages/ApiReference.tsx`, `src/pages/Changelog.tsx`, `src/pages/Faq.tsx`, `src/pages/Support.tsx`, `src/pages/Status.tsx` (new files)
-- Edit: `src/components/Header.tsx` (search → command palette trigger)
-- New: `src/components/CommandPalette.tsx` (shared global ⌘K)
-- Keep: `src/pages/ComingSoon.tsx` (still useful as fallback)
+**Edited:**
+- `src/App.tsx` (new routes)
+- `src/components/Layout.tsx` (breadcrumbs, footer, palette provider)
+- `src/components/Header.tsx` (consume palette context, fix dead buttons)
+- `src/components/AppSidebar.tsx` (search → opens palette)
+- `src/pages/Index.tsx` (drop inline search, add What's new strip)
+- `src/pages/Developers.tsx` (wire api topics → articles)
+- `src/pages/Businesses.tsx` (wire guides/categories/sidebar)
+- `src/pages/Resellers.tsx` (wire training/assets/quick actions)
+- `src/pages/Changelog.tsx` (import shared data)
+- `src/pages/Status.tsx` (import shared data)
+- `src/pages/Support.tsx` (read `?category=` query, show inline confirmation)
+- `src/pages/NotFound.tsx` (APT EmptyState style)
 
+## Out of scope (for next iteration)
+- Real authentication / Lovable Cloud persistence
+- Real article search indexing (palette only navigates routes today)
+- Light mode toggle
+- i18n
