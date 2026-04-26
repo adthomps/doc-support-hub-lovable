@@ -18,6 +18,7 @@ const videoTutorials = [
 export default function Businesses() {
   const articles = articlesByAudience("businesses")
   const categories = categoriesFor("businesses")
+  const filters = useArticleFilters(articles)
 
   const download = (name: string) => toast.info(`${name} — download starting (POC)`)
 
@@ -38,21 +39,28 @@ export default function Businesses() {
                 <BookOpen className="h-4 w-4 text-muted-foreground" /> Popular guides
               </AptCardTitle>
             </AptCardHeader>
-            <AptCardContent className="space-y-2">
-              {articles.map((g) => (
-                <Link key={g.slug} to={`/businesses/articles/${g.slug}`}>
-                  <AptCard variant="interactive" padding="dense" className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-sm font-medium text-foreground">{g.title}</h3>
-                      <div className="mt-1 flex items-center gap-3 text-xs text-muted-foreground">
-                        <AptTag variant="muted">{g.categoryLabel}</AptTag>
-                        <span>{g.readTime}</span>
-                      </div>
-                    </div>
-                    <ArrowRight className="h-4 w-4 text-muted-foreground" />
-                  </AptCard>
-                </Link>
-              ))}
+            <AptCardContent className="space-y-3">
+              <ArticleFiltersBar state={filters} />
+              {filters.filtered.length === 0 ? (
+                <EmptyState title="No matching guides" description="Try a different keyword or change the read-time filter." />
+              ) : (
+                <div className="space-y-2">
+                  {filters.filtered.map((g) => (
+                    <Link key={g.slug} to={`/businesses/articles/${g.slug}`}>
+                      <AptCard variant="interactive" padding="dense" className="flex items-center justify-between">
+                        <div>
+                          <h3 className="text-sm font-medium text-foreground">{g.title}</h3>
+                          <div className="mt-1 flex items-center gap-3 text-xs text-muted-foreground">
+                            <AptTag variant="muted">{g.categoryLabel}</AptTag>
+                            <span>{g.readTime}</span>
+                          </div>
+                        </div>
+                        <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                      </AptCard>
+                    </Link>
+                  ))}
+                </div>
+              )}
             </AptCardContent>
           </AptCard>
 
