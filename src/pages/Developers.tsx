@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button"
 import { AptSection } from "@/components/apt/AptSection"
 import { AptCard, AptCardHeader, AptCardTitle, AptCardContent } from "@/components/apt/AptCard"
 import { AptTag } from "@/components/apt/AptTag"
+import { EmptyState } from "@/components/apt/EmptyState"
+import { useArticleFilters, ArticleFiltersBar } from "@/hooks/useArticleFilters"
 import { articlesByAudience, categoriesFor } from "@/content/articles"
 
 const codeExample = `curl -X POST "https://api.example.com/v1/users" \\
@@ -23,6 +25,7 @@ export default function Developers() {
   const [copied, setCopied] = useState(false)
   const articles = articlesByAudience("developers")
   const categories = categoriesFor("developers")
+  const filters = useArticleFilters(articles)
 
   const copyCode = () => {
     navigator.clipboard.writeText(codeExample)
@@ -83,21 +86,26 @@ export default function Developers() {
                 <FileText className="h-4 w-4 text-muted-foreground" /> Popular articles
               </AptCardTitle>
             </AptCardHeader>
-            <AptCardContent>
-              <div className="grid sm:grid-cols-2 gap-3">
-                {articles.map((a) => (
-                  <Link key={a.slug} to={`/developers/articles/${a.slug}`}>
-                    <AptCard variant="interactive" padding="dense" className="h-full">
-                      <h4 className="text-sm font-semibold text-foreground mb-1">{a.title}</h4>
-                      <p className="text-xs text-muted-foreground leading-relaxed">{a.summary}</p>
-                      <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
-                        <AptTag variant="muted">{a.categoryLabel}</AptTag>
-                        <span>{a.readTime}</span>
-                      </div>
-                    </AptCard>
-                  </Link>
-                ))}
-              </div>
+            <AptCardContent className="space-y-3">
+              <ArticleFiltersBar state={filters} />
+              {filters.filtered.length === 0 ? (
+                <EmptyState title="No matching articles" description="Try a different keyword or change the read-time filter." />
+              ) : (
+                <div className="grid sm:grid-cols-2 gap-3">
+                  {filters.filtered.map((a) => (
+                    <Link key={a.slug} to={`/developers/articles/${a.slug}`}>
+                      <AptCard variant="interactive" padding="dense" className="h-full">
+                        <h4 className="text-sm font-semibold text-foreground mb-1">{a.title}</h4>
+                        <p className="text-xs text-muted-foreground leading-relaxed">{a.summary}</p>
+                        <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
+                          <AptTag variant="muted">{a.categoryLabel}</AptTag>
+                          <span>{a.readTime}</span>
+                        </div>
+                      </AptCard>
+                    </Link>
+                  ))}
+                </div>
+              )}
             </AptCardContent>
           </AptCard>
 
