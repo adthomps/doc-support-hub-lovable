@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button"
 import { AptSection } from "@/components/apt/AptSection"
 import { AptCard, AptCardHeader, AptCardTitle, AptCardContent } from "@/components/apt/AptCard"
 import { AptTag } from "@/components/apt/AptTag"
+import { EmptyState } from "@/components/apt/EmptyState"
+import { useArticleFilters, ArticleFiltersBar } from "@/hooks/useArticleFilters"
 import { articlesByAudience } from "@/content/articles"
 
 const partnerStats = [
@@ -29,6 +31,7 @@ const marketingAssets = [
 
 export default function Resellers() {
   const articles = articlesByAudience("resellers")
+  const filters = useArticleFilters(articles)
   const supportLink = "/support?category=partner"
 
   const openModule = (m: { title: string; status: string }) => {
@@ -98,18 +101,23 @@ export default function Resellers() {
                 <Target className="h-4 w-4 text-muted-foreground" /> Partner articles
               </AptCardTitle>
             </AptCardHeader>
-            <AptCardContent>
-              <div className="grid sm:grid-cols-2 gap-3">
-                {articles.map((a) => (
-                  <Link key={a.slug} to={`/resellers/articles/${a.slug}`}>
-                    <AptCard variant="interactive" padding="dense">
-                      <h3 className="text-sm font-semibold text-foreground mb-1">{a.title}</h3>
-                      <p className="text-xs text-muted-foreground mb-2 leading-relaxed">{a.summary}</p>
-                      <AptTag variant="muted">{a.readTime}</AptTag>
-                    </AptCard>
-                  </Link>
-                ))}
-              </div>
+            <AptCardContent className="space-y-3">
+              <ArticleFiltersBar state={filters} />
+              {filters.filtered.length === 0 ? (
+                <EmptyState title="No matching articles" description="Try a different keyword or change the read-time filter." />
+              ) : (
+                <div className="grid sm:grid-cols-2 gap-3">
+                  {filters.filtered.map((a) => (
+                    <Link key={a.slug} to={`/resellers/articles/${a.slug}`}>
+                      <AptCard variant="interactive" padding="dense">
+                        <h3 className="text-sm font-semibold text-foreground mb-1">{a.title}</h3>
+                        <p className="text-xs text-muted-foreground mb-2 leading-relaxed">{a.summary}</p>
+                        <AptTag variant="muted">{a.readTime}</AptTag>
+                      </AptCard>
+                    </Link>
+                  ))}
+                </div>
+              )}
             </AptCardContent>
           </AptCard>
         </div>
