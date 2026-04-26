@@ -1,9 +1,10 @@
-import { Link } from "react-router-dom"
+import { useEffect, useState } from "react"
+import { Link, useSearchParams } from "react-router-dom"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { toast } from "sonner"
-import { Mail, MessageCircle, Activity } from "lucide-react"
+import { Mail, MessageCircle, Activity, CheckCircle2 } from "lucide-react"
 import { AptSection } from "@/components/apt/AptSection"
 import { AptCard, AptCardHeader, AptCardTitle, AptCardContent } from "@/components/apt/AptCard"
 import { AptTag } from "@/components/apt/AptTag"
@@ -26,6 +27,8 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
+const validCategories = ["billing", "technical", "account", "partner", "other"] as const
+
 const schema = z.object({
   name: z.string().min(2, "Name is required"),
   email: z.string().email("Enter a valid email"),
@@ -37,16 +40,33 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>
 
 export default function Support() {
+  const [params] = useSearchParams()
+  const presetCategory = params.get("category") ?? ""
+  const initialCategory = (validCategories as readonly string[]).includes(presetCategory) ? presetCategory : ""
+  const [submitted, setSubmitted] = useState<{ email: string } | null>(null)
+
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: { name: "", email: "", category: "", subject: "", message: "" },
+    defaultValues: { name: "", email: "", category: initialCategory, subject: "", message: "" },
   })
+
+  useEffect(() => {
+    if (initialCategory) form.setValue("category", initialCategory)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialCategory])
+
+  useEffect(() => {
+    if (!submitted) return
+    const t = setTimeout(() => setSubmitted(null), 8000)
+    return () => clearTimeout(t)
+  }, [submitted])
 
   const onSubmit = (values: FormValues) => {
     toast.success("Support request submitted", {
       description: `We'll reply to ${values.email} shortly.`,
     })
-    form.reset()
+    setSubmitted({ email: values.email })
+    form.reset({ name: "", email: "", category: initialCategory, subject: "", message: "" })
   }
 
   return (
@@ -58,7 +78,19 @@ export default function Support() {
       description="Reach our support team. We respond to most requests within one business day."
     >
       <div className="grid lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-2 space-y-4">
+          {submitted && (
+            <AptCard variant="elevated" padding="default">
+              <div className="flex items-start gap-3">
+                <CheckCircle2 className="h-5 w-5 text-success shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-semibold text-foreground">Request received</p>
+                  <p className="text-xs text-muted-foreground mt-1">We sent a confirmation to {submitted.email}. A team member will follow up within one business day.</p>
+                </div>
+              </div>
+            </AptCard>
+          )}
+
           <AptCard variant="default">
             <AptCardHeader>
               <AptCardTitle>Submit a request</AptCardTitle>
@@ -154,8 +186,12 @@ export default function Support() {
               <AptCardTitle className="text-base">Other channels</AptCardTitle>
             </AptCardHeader>
             <AptCardContent className="space-y-2">
-              <Button variant="outline" className="w-full justify-start"><Mail className="h-4 w-4 mr-2" />support@example.com</Button>
-              <Button variant="outline" className="w-full justify-start"><MessageCircle className="h-4 w-4 mr-2" />Community forum</Button>
+              <Button variant="outline" className="w-full justify-start" asChild>
+                <a href="mailto:support@example.com"><Mail className="h-4 w-4 mr-2" />support@example.com</a>
+              </Button>
+              <Button variant="outline" className="w-full justify-start" onClick={() => toast.info("Community forum — coming soon")}>
+                <MessageCircle className="h-4 w-4 mr-2" />Community forum
+              </Button>
               <Button variant="outline" className="w-full justify-start" asChild>
                 <Link to="/status"><Activity className="h-4 w-4 mr-2" />System status</Link>
               </Button>
