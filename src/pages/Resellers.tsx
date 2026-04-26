@@ -1,8 +1,11 @@
+import { Link } from "react-router-dom"
 import { TrendingUp, FileText, Award, Target, Download } from "lucide-react"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { AptSection } from "@/components/apt/AptSection"
 import { AptCard, AptCardHeader, AptCardTitle, AptCardContent } from "@/components/apt/AptCard"
 import { AptTag } from "@/components/apt/AptTag"
+import { articlesByAudience } from "@/content/articles"
 
 const partnerStats = [
   { label: "Active partners", value: "2,847", change: "+12%" },
@@ -24,14 +27,15 @@ const marketingAssets = [
   { name: "Case studies", type: "PDF", size: "5.2 MB" },
 ]
 
-const salesTools = [
-  { title: "Pricing calculator", description: "Generate custom quotes for prospects", cta: "Open tool" },
-  { title: "ROI templates", description: "Show value to potential customers", cta: "Download" },
-  { title: "Lead tracker", description: "Manage your sales pipeline", cta: "Access" },
-  { title: "Performance dashboard", description: "Track your sales metrics", cta: "View" },
-]
-
 export default function Resellers() {
+  const articles = articlesByAudience("resellers")
+  const supportLink = "/support?category=partner"
+
+  const openModule = (m: { title: string; status: string }) => {
+    const verb = m.status === "completed" ? "Reviewing" : m.status === "in-progress" ? "Resuming" : "Starting"
+    toast.info(`${verb}: ${m.title}`)
+  }
+
   return (
     <AptSection
       spacing="compact"
@@ -41,7 +45,6 @@ export default function Resellers() {
       description="Resources, training, and tools for resellers."
       actions={<AptTag>Partner</AptTag>}
     >
-      {/* Stats */}
       <div className="grid md:grid-cols-3 gap-4 mb-8">
         {partnerStats.map((s) => (
           <AptCard key={s.label} variant="default" padding="default">
@@ -80,7 +83,7 @@ export default function Resellers() {
                         <div className="h-full bg-accent transition-all duration-default" style={{ width: `${m.progress}%` }} />
                       </div>
                     </div>
-                    <Button variant={m.status === "completed" ? "outline" : "primary"} size="sm">
+                    <Button variant={m.status === "completed" ? "outline" : "primary"} size="sm" onClick={() => openModule(m)}>
                       {m.status === "completed" ? "Review" : m.status === "in-progress" ? "Continue" : "Start"}
                     </Button>
                   </div>
@@ -92,17 +95,19 @@ export default function Resellers() {
           <AptCard variant="default">
             <AptCardHeader>
               <AptCardTitle className="flex items-center gap-2">
-                <Target className="h-4 w-4 text-muted-foreground" /> Sales tools & resources
+                <Target className="h-4 w-4 text-muted-foreground" /> Partner articles
               </AptCardTitle>
             </AptCardHeader>
             <AptCardContent>
               <div className="grid sm:grid-cols-2 gap-3">
-                {salesTools.map((t) => (
-                  <AptCard key={t.title} variant="interactive" padding="dense">
-                    <h3 className="text-sm font-semibold text-foreground mb-1">{t.title}</h3>
-                    <p className="text-xs text-muted-foreground mb-3 leading-relaxed">{t.description}</p>
-                    <Button size="sm" variant="outline">{t.cta}</Button>
-                  </AptCard>
+                {articles.map((a) => (
+                  <Link key={a.slug} to={`/resellers/articles/${a.slug}`}>
+                    <AptCard variant="interactive" padding="dense">
+                      <h3 className="text-sm font-semibold text-foreground mb-1">{a.title}</h3>
+                      <p className="text-xs text-muted-foreground mb-2 leading-relaxed">{a.summary}</p>
+                      <AptTag variant="muted">{a.readTime}</AptTag>
+                    </AptCard>
+                  </Link>
                 ))}
               </div>
             </AptCardContent>
@@ -115,9 +120,15 @@ export default function Resellers() {
               <AptCardTitle className="text-base">Quick actions</AptCardTitle>
             </AptCardHeader>
             <AptCardContent className="space-y-2">
-              <Button variant="accent" className="w-full">Submit new lead</Button>
-              <Button variant="outline" className="w-full">Request demo access</Button>
-              <Button variant="outline" className="w-full">Partner support</Button>
+              <Button variant="accent" className="w-full" asChild>
+                <Link to={supportLink}>Submit new lead</Link>
+              </Button>
+              <Button variant="outline" className="w-full" asChild>
+                <Link to={supportLink}>Request demo access</Link>
+              </Button>
+              <Button variant="outline" className="w-full" asChild>
+                <Link to={supportLink}>Partner support</Link>
+              </Button>
             </AptCardContent>
           </AptCard>
 
@@ -134,7 +145,7 @@ export default function Resellers() {
                     <p className="text-sm font-medium text-foreground truncate">{a.name}</p>
                     <p className="text-xs text-muted-foreground">{a.type} • {a.size}</p>
                   </div>
-                  <Button size="icon" variant="ghost" aria-label={`Download ${a.name}`}>
+                  <Button size="icon" variant="ghost" aria-label={`Download ${a.name}`} onClick={() => toast.info(`${a.name} — download starting (POC)`)}>
                     <Download className="h-4 w-4" />
                   </Button>
                 </div>

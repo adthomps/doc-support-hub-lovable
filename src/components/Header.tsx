@@ -1,12 +1,16 @@
-import { useState } from "react"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
 import { Bell, Github, ExternalLink, Search } from "lucide-react"
 import { Link } from "react-router-dom"
-import { CommandPalette } from "@/components/CommandPalette"
+import { useCommandPalette } from "@/hooks/useCommandPalette"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 
 export function Header() {
-  const [open, setOpen] = useState(false)
+  const { setOpen } = useCommandPalette()
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">
@@ -39,20 +43,34 @@ export function Header() {
           <Button variant="ghost" size="icon" aria-label="Open search" onClick={() => setOpen(true)} className="md:hidden">
             <Search className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" size="icon" aria-label="Notifications">
-            <Bell className="h-4 w-4" />
+
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="ghost" size="icon" aria-label="Notifications">
+                <Bell className="h-4 w-4" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent align="end" className="w-72">
+              <div className="space-y-1.5">
+                <p className="text-sm font-medium text-foreground">Notifications</p>
+                <p className="text-xs text-muted-foreground">You're all caught up. We'll let you know when something needs your attention.</p>
+              </div>
+            </PopoverContent>
+          </Popover>
+
+          <Button variant="ghost" size="icon" aria-label="APT principles on GitHub" asChild>
+            <a href="https://github.com/adthomps/apt-principles" target="_blank" rel="noreferrer">
+              <Github className="h-4 w-4" />
+            </a>
           </Button>
-          <Button variant="ghost" size="icon" aria-label="GitHub">
-            <Github className="h-4 w-4" />
-          </Button>
-          <Button variant="outline" size="sm">
-            <ExternalLink className="h-4 w-4 mr-2" />
-            Visit app
+          <Button variant="outline" size="sm" asChild>
+            <Link to="/getting-started">
+              <ExternalLink className="h-4 w-4 mr-2" />
+              Get started
+            </Link>
           </Button>
         </div>
       </div>
-
-      <CommandPalette open={open} onOpenChange={setOpen} />
     </header>
   )
 }

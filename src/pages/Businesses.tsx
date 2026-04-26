@@ -1,15 +1,11 @@
-import { BookOpen, Video, HelpCircle, Star, ArrowRight } from "lucide-react"
+import { Link } from "react-router-dom"
+import { BookOpen, Video, HelpCircle, ArrowRight } from "lucide-react"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { AptSection } from "@/components/apt/AptSection"
 import { AptCard, AptCardHeader, AptCardTitle, AptCardContent } from "@/components/apt/AptCard"
 import { AptTag } from "@/components/apt/AptTag"
-
-const popularGuides = [
-  { title: "Onboarding your business", views: "9.8k", rating: 4.9, time: "6 min read" },
-  { title: "Accepting payments", views: "7.4k", rating: 4.8, time: "5 min read" },
-  { title: "Managing payouts", views: "5.2k", rating: 4.7, time: "4 min read" },
-  { title: "Handling disputes & chargebacks", views: "3.9k", rating: 4.6, time: "7 min read" },
-]
+import { articlesByAudience, categoriesFor } from "@/content/articles"
 
 const videoTutorials = [
   { title: "Merchant dashboard tour", duration: "10:12" },
@@ -17,14 +13,12 @@ const videoTutorials = [
   { title: "Resolving a dispute", duration: "9:08" },
 ]
 
-const categories = [
-  { title: "Onboarding & KYC", description: "Verification, business profile, compliance", count: 14 },
-  { title: "Payments & payouts", description: "Acceptance, settlement, schedules", count: 21 },
-  { title: "Billing & invoicing", description: "Invoices, subscriptions, taxes", count: 16 },
-  { title: "Disputes & risk", description: "Chargebacks, fraud signals, appeals", count: 11 },
-]
-
 export default function Businesses() {
+  const articles = articlesByAudience("businesses")
+  const categories = categoriesFor("businesses")
+
+  const download = (name: string) => toast.info(`${name} — download starting (POC)`)
+
   return (
     <AptSection
       spacing="compact"
@@ -43,20 +37,19 @@ export default function Businesses() {
               </AptCardTitle>
             </AptCardHeader>
             <AptCardContent className="space-y-2">
-              {popularGuides.map((g) => (
-                <AptCard key={g.title} variant="interactive" padding="dense" className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-sm font-medium text-foreground">{g.title}</h3>
-                    <div className="mt-1 flex items-center gap-3 text-xs text-muted-foreground">
-                      <span>{g.views} views</span>
-                      <span className="flex items-center gap-1">
-                        <Star className="h-3 w-3" /> {g.rating}
-                      </span>
-                      <span>{g.time}</span>
+              {articles.map((g) => (
+                <Link key={g.slug} to={`/businesses/articles/${g.slug}`}>
+                  <AptCard variant="interactive" padding="dense" className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-sm font-medium text-foreground">{g.title}</h3>
+                      <div className="mt-1 flex items-center gap-3 text-xs text-muted-foreground">
+                        <AptTag variant="muted">{g.categoryLabel}</AptTag>
+                        <span>{g.readTime}</span>
+                      </div>
                     </div>
-                  </div>
-                  <ArrowRight className="h-4 w-4 text-muted-foreground" />
-                </AptCard>
+                    <ArrowRight className="h-4 w-4 text-muted-foreground" />
+                  </AptCard>
+                </Link>
               ))}
             </AptCardContent>
           </AptCard>
@@ -70,13 +63,15 @@ export default function Businesses() {
             <AptCardContent>
               <div className="grid sm:grid-cols-3 gap-3">
                 {videoTutorials.map((v) => (
-                  <AptCard key={v.title} variant="interactive" padding="dense">
-                    <div className="aspect-video rounded-md bg-secondary border border-border mb-3 flex items-center justify-center">
-                      <Video className="h-5 w-5 text-muted-foreground" />
-                    </div>
-                    <h3 className="text-sm font-medium text-foreground">{v.title}</h3>
-                    <p className="text-xs text-muted-foreground mt-0.5">{v.duration}</p>
-                  </AptCard>
+                  <button key={v.title} onClick={() => toast.info(`${v.title} — opening (POC)`)} className="text-left">
+                    <AptCard variant="interactive" padding="dense">
+                      <div className="aspect-video rounded-md bg-secondary border border-border mb-3 flex items-center justify-center">
+                        <Video className="h-5 w-5 text-muted-foreground" />
+                      </div>
+                      <h3 className="text-sm font-medium text-foreground">{v.title}</h3>
+                      <p className="text-xs text-muted-foreground mt-0.5">{v.duration}</p>
+                    </AptCard>
+                  </button>
                 ))}
               </div>
             </AptCardContent>
@@ -89,11 +84,12 @@ export default function Businesses() {
             <AptCardContent>
               <div className="grid sm:grid-cols-2 gap-3">
                 {categories.map((c) => (
-                  <AptCard key={c.title} variant="interactive" padding="dense">
-                    <h3 className="text-sm font-semibold text-foreground mb-1">{c.title}</h3>
-                    <p className="text-xs text-muted-foreground mb-2 leading-relaxed">{c.description}</p>
-                    <AptTag variant="muted">{c.count} articles</AptTag>
-                  </AptCard>
+                  <Link key={c.slug} to={`/businesses/category/${c.slug}`}>
+                    <AptCard variant="interactive" padding="dense">
+                      <h3 className="text-sm font-semibold text-foreground mb-1">{c.label}</h3>
+                      <AptTag variant="muted">{c.count} article{c.count === 1 ? "" : "s"}</AptTag>
+                    </AptCard>
+                  </Link>
                 ))}
               </div>
             </AptCardContent>
@@ -106,9 +102,11 @@ export default function Businesses() {
               <AptCardTitle className="text-base">Need more help?</AptCardTitle>
             </AptCardHeader>
             <AptCardContent className="space-y-2">
-              <Button variant="accent" className="w-full">Contact support</Button>
-              <Button variant="outline" className="w-full">Live chat</Button>
-              <Button variant="outline" className="w-full">Community forum</Button>
+              <Button variant="accent" className="w-full" asChild>
+                <Link to="/support">Contact support</Link>
+              </Button>
+              <Button variant="outline" className="w-full" onClick={() => toast.info("Live chat — coming soon")}>Live chat</Button>
+              <Button variant="outline" className="w-full" onClick={() => toast.info("Community forum — coming soon")}>Community forum</Button>
             </AptCardContent>
           </AptCard>
 
@@ -127,7 +125,9 @@ export default function Businesses() {
                 <p className="text-sm font-medium text-foreground">How do I respond to a dispute?</p>
                 <p className="text-xs text-muted-foreground mt-0.5">Open the dispute, attach evidence, submit…</p>
               </div>
-              <Button variant="ghost" size="sm" className="w-full">View all FAQs</Button>
+              <Button variant="ghost" size="sm" className="w-full" asChild>
+                <Link to="/faq">View all FAQs</Link>
+              </Button>
             </AptCardContent>
           </AptCard>
 
@@ -136,13 +136,13 @@ export default function Businesses() {
               <AptCardTitle className="text-base">Downloads</AptCardTitle>
             </AptCardHeader>
             <AptCardContent className="space-y-2">
-              <Button variant="outline" className="w-full justify-between">
+              <Button variant="outline" className="w-full justify-between" onClick={() => download("Merchant app (iOS)")}>
                 Merchant app (iOS) <span className="text-xs text-muted-foreground">v2.1.0</span>
               </Button>
-              <Button variant="outline" className="w-full justify-between">
+              <Button variant="outline" className="w-full justify-between" onClick={() => download("Merchant app (Android)")}>
                 Merchant app (Android) <span className="text-xs text-muted-foreground">v2.1.0</span>
               </Button>
-              <Button variant="outline" className="w-full justify-between">
+              <Button variant="outline" className="w-full justify-between" onClick={() => download("Desktop dashboard")}>
                 Desktop dashboard <span className="text-xs text-muted-foreground">v1.5.2</span>
               </Button>
             </AptCardContent>
