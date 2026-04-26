@@ -1,118 +1,53 @@
 import { Link } from "react-router-dom"
-import { TrendingUp, FileText, Award, Target, Download } from "lucide-react"
-import { toast } from "sonner"
+import { BookOpen, HelpCircle, Megaphone, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { AptSection } from "@/components/apt/AptSection"
 import { AptCard, AptCardHeader, AptCardTitle, AptCardContent } from "@/components/apt/AptCard"
 import { AptTag } from "@/components/apt/AptTag"
 import { EmptyState } from "@/components/apt/EmptyState"
 import { useArticleFilters, ArticleFiltersBar } from "@/hooks/useArticleFilters"
-import { articlesByAudience } from "@/content/articles"
-
-const partnerStats = [
-  { label: "Active partners", value: "2,847", change: "+12%" },
-  { label: "Total revenue", value: "$1.2M", change: "+24%" },
-  { label: "Commission rate", value: "15%", change: "Avg" },
-]
-
-const trainingModules = [
-  { title: "Product overview", status: "completed", progress: 100 },
-  { title: "Sales techniques", status: "in-progress", progress: 65 },
-  { title: "Technical deep dive", status: "available", progress: 0 },
-  { title: "Customer success", status: "available", progress: 0 },
-]
-
-const marketingAssets = [
-  { name: "Brand guidelines", type: "PDF", size: "2.4 MB" },
-  { name: "Logo pack", type: "ZIP", size: "15.8 MB" },
-  { name: "Product brochure", type: "PDF", size: "3.1 MB" },
-  { name: "Case studies", type: "PDF", size: "5.2 MB" },
-]
+import { articlesByAudience, categoriesFor } from "@/content/articles"
 
 export default function Resellers() {
   const articles = articlesByAudience("resellers")
+  const categories = categoriesFor("resellers")
   const filters = useArticleFilters(articles)
   const supportLink = "/support?category=partner"
-
-  const openModule = (m: { title: string; status: string }) => {
-    const verb = m.status === "completed" ? "Reviewing" : m.status === "in-progress" ? "Resuming" : "Starting"
-    toast.info(`${verb}: ${m.title}`)
-  }
 
   return (
     <AptSection
       spacing="compact"
       width="wide"
       eyebrow="Resellers"
-      title="Partner portal"
-      description="Resources, training, and tools for resellers."
+      title="Reseller & partner hub"
+      description="Guides, program information, and support for resellers and channel partners. For the live partner portal, sign in to your partner account."
       actions={<AptTag>Partner</AptTag>}
     >
-      <div className="grid md:grid-cols-3 gap-4 mb-8">
-        {partnerStats.map((s) => (
-          <AptCard key={s.label} variant="default" padding="default">
-            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{s.label}</p>
-            <div className="mt-2 flex items-end justify-between">
-              <p className="text-2xl font-semibold text-foreground">{s.value}</p>
-              <AptTag variant={s.change.includes("+") ? "success" : "muted"}>{s.change}</AptTag>
-            </div>
-          </AptCard>
-        ))}
-      </div>
-
       <div className="grid lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
           <AptCard variant="default">
             <AptCardHeader>
               <AptCardTitle className="flex items-center gap-2">
-                <Award className="h-4 w-4 text-muted-foreground" /> Training & certification
-              </AptCardTitle>
-            </AptCardHeader>
-            <AptCardContent className="space-y-3">
-              <p className="text-sm text-muted-foreground leading-relaxed mb-2">
-                Complete training modules to become a certified partner and unlock higher commission rates.
-              </p>
-              {trainingModules.map((m) => (
-                <AptCard key={m.title} variant="subtle" padding="dense">
-                  <div className="flex items-center justify-between gap-4">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-2">
-                        <h3 className="text-sm font-medium text-foreground">{m.title}</h3>
-                        <AptTag variant={m.status === "completed" ? "success" : m.status === "in-progress" ? "accent" : "muted"}>
-                          {m.status}
-                        </AptTag>
-                      </div>
-                      <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
-                        <div className="h-full bg-accent transition-all duration-default" style={{ width: `${m.progress}%` }} />
-                      </div>
-                    </div>
-                    <Button variant={m.status === "completed" ? "outline" : "primary"} size="sm" onClick={() => openModule(m)}>
-                      {m.status === "completed" ? "Review" : m.status === "in-progress" ? "Continue" : "Start"}
-                    </Button>
-                  </div>
-                </AptCard>
-              ))}
-            </AptCardContent>
-          </AptCard>
-
-          <AptCard variant="default">
-            <AptCardHeader>
-              <AptCardTitle className="flex items-center gap-2">
-                <Target className="h-4 w-4 text-muted-foreground" /> Partner articles
+                <BookOpen className="h-4 w-4 text-muted-foreground" /> Partner guides
               </AptCardTitle>
             </AptCardHeader>
             <AptCardContent className="space-y-3">
               <ArticleFiltersBar state={filters} />
               {filters.filtered.length === 0 ? (
-                <EmptyState title="No matching articles" description="Try a different keyword or change the read-time filter." />
+                <EmptyState title="No matching guides" description="Try a different keyword or change the read-time filter." />
               ) : (
-                <div className="grid sm:grid-cols-2 gap-3">
-                  {filters.filtered.map((a) => (
-                    <Link key={a.slug} to={`/resellers/articles/${a.slug}`}>
-                      <AptCard variant="interactive" padding="dense">
-                        <h3 className="text-sm font-semibold text-foreground mb-1">{a.title}</h3>
-                        <p className="text-xs text-muted-foreground mb-2 leading-relaxed">{a.summary}</p>
-                        <AptTag variant="muted">{a.readTime}</AptTag>
+                <div className="space-y-2">
+                  {filters.filtered.map((g) => (
+                    <Link key={g.slug} to={`/resellers/articles/${g.slug}`}>
+                      <AptCard variant="interactive" padding="dense" className="flex items-center justify-between">
+                        <div>
+                          <h3 className="text-sm font-medium text-foreground">{g.title}</h3>
+                          <div className="mt-1 flex items-center gap-3 text-xs text-muted-foreground">
+                            <AptTag variant="muted">{g.categoryLabel}</AptTag>
+                            <span>{g.readTime}</span>
+                          </div>
+                        </div>
+                        <ArrowRight className="h-4 w-4 text-muted-foreground" />
                       </AptCard>
                     </Link>
                   ))}
@@ -120,22 +55,67 @@ export default function Resellers() {
               )}
             </AptCardContent>
           </AptCard>
+
+          <AptCard variant="default">
+            <AptCardHeader>
+              <AptCardTitle>Browse by category</AptCardTitle>
+            </AptCardHeader>
+            <AptCardContent>
+              <div className="grid sm:grid-cols-2 gap-3">
+                {categories.map((c) => (
+                  <Link key={c.slug} to={`/resellers/category/${c.slug}`}>
+                    <AptCard variant="interactive" padding="dense">
+                      <h3 className="text-sm font-semibold text-foreground mb-1">{c.label}</h3>
+                      <AptTag variant="muted">{c.count} article{c.count === 1 ? "" : "s"}</AptTag>
+                    </AptCard>
+                  </Link>
+                ))}
+              </div>
+            </AptCardContent>
+          </AptCard>
+
+          <AptCard variant="default">
+            <AptCardHeader>
+              <AptCardTitle className="flex items-center gap-2">
+                <Megaphone className="h-4 w-4 text-muted-foreground" /> Program at a glance
+              </AptCardTitle>
+            </AptCardHeader>
+            <AptCardContent>
+              <dl className="grid sm:grid-cols-3 gap-4">
+                <div>
+                  <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Tiers</dt>
+                  <dd className="mt-1 text-sm text-foreground">Authorized, Silver, Gold</dd>
+                </div>
+                <div>
+                  <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Commission</dt>
+                  <dd className="mt-1 text-sm text-foreground">Tier-based, paid monthly</dd>
+                </div>
+                <div>
+                  <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Onboarding</dt>
+                  <dd className="mt-1 text-sm text-foreground">Agreement + training module</dd>
+                </div>
+              </dl>
+              <p className="mt-4 text-xs text-muted-foreground leading-relaxed">
+                Detailed terms, certification paths, and marketing assets live inside the partner portal after onboarding.
+              </p>
+            </AptCardContent>
+          </AptCard>
         </div>
 
         <aside className="space-y-6">
           <AptCard variant="feature">
             <AptCardHeader>
-              <AptCardTitle className="text-base">Quick actions</AptCardTitle>
+              <AptCardTitle className="text-base">Partner support</AptCardTitle>
             </AptCardHeader>
             <AptCardContent className="space-y-2">
               <Button variant="accent" className="w-full" asChild>
-                <Link to={supportLink}>Submit new lead</Link>
+                <Link to={supportLink}>Contact partner support</Link>
               </Button>
               <Button variant="outline" className="w-full" asChild>
-                <Link to={supportLink}>Request demo access</Link>
+                <Link to={supportLink}>Submit a partner request</Link>
               </Button>
               <Button variant="outline" className="w-full" asChild>
-                <Link to={supportLink}>Partner support</Link>
+                <Link to="/support?category=partner&topic=track">Track a ticket</Link>
               </Button>
             </AptCardContent>
           </AptCard>
@@ -143,43 +123,36 @@ export default function Resellers() {
           <AptCard variant="subtle">
             <AptCardHeader>
               <AptCardTitle className="text-base flex items-center gap-2">
-                <FileText className="h-4 w-4" /> Marketing assets
+                <HelpCircle className="h-4 w-4" /> Common partner questions
               </AptCardTitle>
             </AptCardHeader>
-            <AptCardContent className="space-y-1">
-              {marketingAssets.map((a) => (
-                <div key={a.name} className="flex items-center justify-between rounded-md px-2 py-2 hover:bg-secondary transition-colors duration-fast">
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium text-foreground truncate">{a.name}</p>
-                    <p className="text-xs text-muted-foreground">{a.type} • {a.size}</p>
-                  </div>
-                  <Button size="icon" variant="ghost" aria-label={`Download ${a.name}`} onClick={() => toast.info(`${a.name} — download starting (POC)`)}>
-                    <Download className="h-4 w-4" />
-                  </Button>
-                </div>
-              ))}
+            <AptCardContent className="space-y-3">
+              <div>
+                <p className="text-sm font-medium text-foreground">How do I become a partner?</p>
+                <p className="text-xs text-muted-foreground mt-0.5">Review the onboarding guide and sign the partner agreement.</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-foreground">When are commissions paid?</p>
+                <p className="text-xs text-muted-foreground mt-0.5">Monthly in arrears, based on net revenue from managed accounts.</p>
+              </div>
+              <Button variant="ghost" size="sm" className="w-full" asChild>
+                <Link to="/faq">View all FAQs</Link>
+              </Button>
             </AptCardContent>
           </AptCard>
 
           <AptCard variant="default">
             <AptCardHeader>
-              <AptCardTitle className="text-base flex items-center gap-2">
-                <TrendingUp className="h-4 w-4" /> This month
-              </AptCardTitle>
+              <AptCardTitle className="text-base">Status</AptCardTitle>
             </AptCardHeader>
-            <AptCardContent className="space-y-2.5">
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Leads generated</span>
-                <span className="font-medium text-foreground">24</span>
+            <AptCardContent>
+              <div className="flex items-center gap-2 mb-3">
+                <span className="h-2 w-2 rounded-full bg-success" />
+                <span className="text-sm text-foreground">All systems operational</span>
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Closed deals</span>
-                <span className="font-medium text-foreground">7</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Commission earned</span>
-                <span className="font-medium text-foreground">$4,250</span>
-              </div>
+              <Button variant="outline" size="sm" className="w-full" asChild>
+                <Link to="/status">View status page</Link>
+              </Button>
             </AptCardContent>
           </AptCard>
         </aside>
