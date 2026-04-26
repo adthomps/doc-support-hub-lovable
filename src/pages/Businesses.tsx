@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button"
 import { AptSection } from "@/components/apt/AptSection"
 import { AptCard, AptCardHeader, AptCardTitle, AptCardContent } from "@/components/apt/AptCard"
 import { AptTag } from "@/components/apt/AptTag"
+import { EmptyState } from "@/components/apt/EmptyState"
+import { useArticleFilters, ArticleFiltersBar } from "@/hooks/useArticleFilters"
 import { articlesByAudience, categoriesFor } from "@/content/articles"
 
 const videoTutorials = [
