@@ -25,6 +25,7 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar"
+import { useCommandPalette } from "@/hooks/useCommandPalette"
 
 const audienceItems = [
   { title: "Developers", url: "/developers", icon: Code, description: "APIs, SDKs & Integration" },
@@ -48,6 +49,7 @@ export function AppSidebar() {
   const { state } = useSidebar()
   const location = useLocation()
   const currentPath = location.pathname
+  const { setOpen } = useCommandPalette()
 
   const isActive = (path: string) => currentPath === path || currentPath.startsWith(path + "/")
   const getNavCls = ({ isActive }: { isActive: boolean }) =>
@@ -59,17 +61,18 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon" className="border-r">
       <SidebarContent className="pt-4">
-        {/* Search */}
+        {/* Search → opens command palette */}
         {!isCollapsed && (
           <div className="px-4 mb-6">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <input
-                type="text"
-                placeholder="Search documentation..."
-                className="w-full pl-10 pr-4 py-2 border border-input rounded-lg bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-              />
-            </div>
+            <button
+              onClick={() => setOpen(true)}
+              aria-label="Open command palette"
+              className="w-full flex items-center gap-2 h-9 rounded-md border border-input bg-background px-3 text-left text-sm text-muted-foreground hover:bg-muted/50 transition-colors"
+            >
+              <Search className="h-4 w-4" />
+              <span className="flex-1">Search…</span>
+              <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border border-border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">⌘K</kbd>
+            </button>
           </div>
         )}
 

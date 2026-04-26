@@ -14,6 +14,8 @@ import Changelog from "./pages/Changelog";
 import Faq from "./pages/Faq";
 import Support from "./pages/Support";
 import Status from "./pages/Status";
+import Article from "./pages/Article";
+import CategoryIndex from "./pages/CategoryIndex";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +32,8 @@ const App = () => (
           <Route path="/businesses" element={<Layout><Businesses /></Layout>} />
           <Route path="/customers" element={<Navigate to="/businesses" replace />} />
           <Route path="/resellers" element={<Layout><Resellers /></Layout>} />
+          <Route path="/:audience/articles/:slug" element={<Layout><Article /></Layout>} />
+          <Route path="/:audience/category/:categorySlug" element={<Layout><CategoryIndex /></Layout>} />
           <Route path="/getting-started" element={<Layout><GettingStarted /></Layout>} />
           <Route path="/api" element={<Layout><ApiReference /></Layout>} />
           <Route path="/changelog" element={<Layout><Changelog /></Layout>} />
@@ -37,7 +41,7 @@ const App = () => (
           <Route path="/support" element={<Layout><Support /></Layout>} />
           <Route path="/status" element={<Layout><Status /></Layout>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
+          <Route path="*" element={<Layout><NotFound /></Layout>} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
