@@ -5,6 +5,7 @@ import { AptCard, AptCardHeader, AptCardTitle, AptCardContent } from "@/componen
 import { AptTag } from "@/components/apt/AptTag"
 import { EmptyState } from "@/components/apt/EmptyState"
 import { Button } from "@/components/ui/button"
+import { useArticleFilters, ArticleFiltersBar } from "@/hooks/useArticleFilters"
 import { articlesByCategory, categoriesFor, type Audience } from "@/content/articles"
 
 const audienceLabel: Record<Audience, string> = {
@@ -22,6 +23,7 @@ export default function CategoryIndex() {
   const aud = audience as Audience
   const cat = categoriesFor(aud).find((c) => c.slug === categorySlug)
   const articles = categorySlug ? articlesByCategory(aud, categorySlug) : []
+  const filters = useArticleFilters(articles)
 
   return (
     <AptSection
@@ -43,21 +45,28 @@ export default function CategoryIndex() {
           <AptCardHeader>
             <AptCardTitle>Articles</AptCardTitle>
           </AptCardHeader>
-          <AptCardContent className="space-y-2">
-            {articles.map((a) => (
-              <Link key={a.slug} to={`/${aud}/articles/${a.slug}`}>
-                <AptCard variant="interactive" padding="dense" className="flex items-center justify-between gap-4">
-                  <div className="min-w-0">
-                    <h3 className="text-sm font-medium text-foreground">{a.title}</h3>
-                    <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{a.summary}</p>
-                    <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
-                      <Clock className="h-3 w-3" /> {a.readTime}
-                    </div>
-                  </div>
-                  <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0" />
-                </AptCard>
-              </Link>
-            ))}
+          <AptCardContent className="space-y-3">
+            <ArticleFiltersBar state={filters} />
+            {filters.filtered.length === 0 ? (
+              <EmptyState title="No matches" description="Try a different keyword or read-time filter." />
+            ) : (
+              <div className="space-y-2">
+                {filters.filtered.map((a) => (
+                  <Link key={a.slug} to={`/${aud}/articles/${a.slug}`}>
+                    <AptCard variant="interactive" padding="dense" className="flex items-center justify-between gap-4">
+                      <div className="min-w-0">
+                        <h3 className="text-sm font-medium text-foreground">{a.title}</h3>
+                        <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{a.summary}</p>
+                        <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
+                          <Clock className="h-3 w-3" /> {a.readTime}
+                        </div>
+                      </div>
+                      <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0" />
+                    </AptCard>
+                  </Link>
+                ))}
+              </div>
+            )}
           </AptCardContent>
         </AptCard>
       )}
