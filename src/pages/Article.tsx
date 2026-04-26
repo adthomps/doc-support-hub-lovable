@@ -1,12 +1,14 @@
 import { Link, useParams, Navigate } from "react-router-dom"
-import { Clock, ArrowRight, ThumbsUp, ThumbsDown } from "lucide-react"
-import { useState } from "react"
+import { Clock, ArrowRight, ThumbsUp, ThumbsDown, RotateCcw } from "lucide-react"
+import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import { AptSection } from "@/components/apt/AptSection"
 import { AptCard, AptCardHeader, AptCardTitle, AptCardContent } from "@/components/apt/AptCard"
 import { AptTag } from "@/components/apt/AptTag"
 import { EmptyState } from "@/components/apt/EmptyState"
 import { Button } from "@/components/ui/button"
+import { Textarea } from "@/components/ui/textarea"
+import { useArticleFeedback } from "@/hooks/useArticleFeedback"
 import { findArticle, articlesByAudience, type Audience, type ArticleBlock } from "@/content/articles"
 
 const audienceLabel: Record<Audience, string> = {
