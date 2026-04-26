@@ -74,10 +74,30 @@ export default function Article() {
   }
 
   const related = articlesByAudience(aud).filter((a) => a.slug !== article.slug).slice(0, 3)
+  const { entry, vote, setVote, clear } = useArticleFeedback(aud, article.slug)
+  const [showComment, setShowComment] = useState(false)
+  const [comment, setComment] = useState("")
 
-  const vote = (v: "up" | "down") => {
-    setVoted(v)
-    toast.success("Thanks for the feedback")
+  useEffect(() => {
+    setComment(entry?.comment ?? "")
+    setShowComment(false)
+  }, [entry?.vote, article.slug])
+
+  const cast = (v: "up" | "down") => {
+    setVote(v, comment)
+    toast.success(v === "up" ? "Thanks — feedback saved" : "Thanks — we'll use this to improve")
+  }
+  const saveComment = () => {
+    if (!entry) return
+    setVote(entry.vote, comment)
+    setShowComment(false)
+    toast.success("Comment saved")
+  }
+  const reset = () => {
+    clear()
+    setComment("")
+    setShowComment(false)
+    toast.info("Feedback cleared")
   }
 
   return (
@@ -105,16 +125,60 @@ export default function Article() {
           </AptCard>
 
           <AptCard variant="subtle" padding="dense">
-            <div className="flex items-center justify-between gap-3 flex-wrap">
-              <p className="text-sm text-foreground">Was this article helpful?</p>
-              <div className="flex items-center gap-2">
-                <Button variant={voted === "up" ? "accent" : "outline"} size="sm" onClick={() => vote("up")}>
-                  <ThumbsUp className="h-3.5 w-3.5 mr-1.5" /> Yes
-                </Button>
-                <Button variant={voted === "down" ? "accent" : "outline"} size="sm" onClick={() => vote("down")}>
-                  <ThumbsDown className="h-3.5 w-3.5 mr-1.5" /> No
-                </Button>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between gap-3 flex-wrap">
+                <div>
+                  <p className="text-sm font-medium text-foreground">Was this article helpful?</p>
+                  {entry && (
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      You voted {entry.vote === "up" ? "Yes" : "No"} on {new Date(entry.at).toLocaleDateString()}
+                    </p>
+                  )}
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button variant={entry?.vote === "up" ? "accent" : "outline"} size="sm" onClick={() => cast("up")}>
+                    <ThumbsUp className="h-3.5 w-3.5 mr-1.5" /> Yes
+                  </Button>
+                  <Button variant={entry?.vote === "down" ? "accent" : "outline"} size="sm" onClick={() => cast("down")}>
+                    <ThumbsDown className="h-3.5 w-3.5 mr-1.5" /> No
+                  </Button>
+                  {entry && (
+                    <Button variant="ghost" size="sm" onClick={reset} aria-label="Clear feedback">
+                      <RotateCcw className="h-3.5 w-3.5" />
+                    </Button>
+                  )}
+                </div>
               </div>
+
+              {entry && !showComment && !entry.comment && (
+                <Button variant="ghost" size="sm" onClick={() => setShowComment(true)}>
+                  Add a comment
+                </Button>
+              )}
+              {entry && entry.comment && !showComment && (
+                <div className="rounded-md border border-border bg-background p-3">
+                  <p className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Your comment</p>
+                  <p className="text-sm text-foreground">{entry.comment}</p>
+                  <Button variant="ghost" size="sm" className="mt-2" onClick={() => setShowComment(true)}>Edit</Button>
+                </div>
+              )}
+              {entry && showComment && (
+                <div className="space-y-2">
+                  <Textarea
+                    rows={3}
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value.slice(0, 500))}
+                    placeholder="Tell us what worked or what was missing (optional)"
+                  />
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground">{comment.length}/500</span>
+                    <div className="flex gap-2">
+                      <Button variant="ghost" size="sm" onClick={() => setShowComment(false)}>Cancel</Button>
+                      <Button variant="accent" size="sm" onClick={saveComment}>Save</Button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </AptCard>
         </article>
