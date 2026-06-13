@@ -1,102 +1,109 @@
 ## Goal
 
-Take the POC from "every top-level route renders something" to "every link goes somewhere meaningful, every page has complete states, and the experience aligns with APT design principles." No new design tokens.
+Cover more user types within the existing 3-hub structure and deepen the documentation so reviewers can click through realistic, persona-targeted content.
 
-## Audit — what's missing today
+- Keep top-level hubs: **Developers**, **Businesses**, **Resellers** (renamed in sidebar to **Partners & Resellers**).
+- Inside each hub, add **sub-persona tabs** that filter guides and surface "task flows".
+- Reach **4–6 guides per persona** with step-by-step bodies, prerequisites, and "next step" chaining.
+- Expand the **API reference** and add **integration guides**, **auth & security**, and **acquirer/partner technical docs**.
 
-**Dead links / no terminal pages:**
-- Audience hubs (Developers, Businesses, Resellers) list "Popular guides", "Categories", "Video tutorials", "API topics", "Marketing assets", "SDK buttons", "Quick FAQ → View all" — none of these are clickable to a real article/detail.
-- Businesses sidebar buttons (Contact support, Live chat, Community forum, Downloads) are not wired.
-- Resellers sidebar (Submit lead, Request demo, Partner support, Marketing asset downloads, Training Start/Continue) are not wired.
-- Header "Visit app", "Notifications", "GitHub" are decorative only.
-- Sidebar still has its own non-functional `<input>` search instead of opening the command palette.
-- Index hero search input does not open the command palette.
+## Sub-personas per hub
 
-**APT design-principle gaps (per `design.md`):**
-- "Complete states are required" — no empty/loading/error states on lists, search, or forms beyond Faq's empty hint.
-- No breadcrumbs / location signal on subpages.
-- No 404 styling consistent with APT (NotFound is default scaffold).
-- Index page shows the older hero + audience grid pattern; per APT "structure over decoration", trim hero to a single clear value statement and remove the redundant non-functional hero search (palette already in header).
-- Footer is missing — no global location for principles, version, status link.
+- **Developers** → Integrators (build new), Platform engineers (operate/scale), Partner/Acquirer developers (sub-merchant APIs).
+- **Businesses** → Merchants (day-to-day), Business owners (finance/strategy), Operations (disputes/fraud/payouts).
+- **Partners & Resellers** → Resellers, Acquirers / ISOs, Referral partners.
 
-**Content gaps:**
-- No actual documentation articles. Everything is a list pointing nowhere.
-- Changelog/API/Status are interactive but isolated; no cross-links from audience hubs.
+Sub-persona selection filters the article list and recommended task flows; the URL keeps a `?persona=` query so links remain shareable.
 
-## Plan
+## Content additions (registry-driven)
 
-### 1. New: generic Article route + content registry
-- Add `src/content/articles.ts` — typed registry of ~12 mock articles (4 per audience): id, slug, audience, title, summary, readTime, body (markdown-ish string rendered as styled paragraphs/lists/code).
-- Add `src/pages/Article.tsx` — renders one article by slug, with breadcrumbs (Home › {Audience} › {Title}), AptTag for audience, "Was this helpful?" footer, "Related articles" sidebar (3 from same audience), "Need help? → /support" CTA.
-- Route: `/:audience/articles/:slug` in `App.tsx` (audience ∈ developers|businesses|resellers, validated in the page).
-- Wire all "Popular guides", "Categories" (category opens an index list), and "API topics" cards on the three audience hubs to real article slugs.
+Extend `src/content/articles.ts` with a `personas?: string[]` tag on each article plus new entries:
 
-### 2. New: Category index pages (lightweight)
-- Add `src/pages/CategoryIndex.tsx` — route `/:audience/category/:categorySlug`. Lists articles in that category with empty-state when none.
-- Wire category cards on Businesses/Developers/Resellers to this route.
+**Developers (target 6+)**
+- Quickstart: first API call (integrators)
+- Hosted checkout integration (integrators) — use case guide
+- Server-to-server payments (integrators)
+- Webhooks deep dive + retries (platform eng)
+- Auth & security: API keys, OAuth, request signing, IP allowlists, PCI scope (platform eng)
+- Sub-merchant onboarding API (acquirer devs)
+- Revenue share / split payments API (acquirer devs)
 
-### 3. New: Breadcrumbs primitive
-- Add `src/components/apt/AptBreadcrumbs.tsx` (wraps shadcn `breadcrumb`) — used in Layout above each subpage main content based on route segments + a small route-title map.
+**Businesses (target 6+)**
+- Onboarding your business (existing) — add prerequisites + next step
+- Accepting payments (existing) — expand methods, regions
+- Managing payouts (existing) — add reconciliation flow
+- Handling disputes (existing) — add evidence checklist
+- Invoicing and recurring billing (business owners)
+- Fraud and risk controls (operations)
+- Team roles and permissions (business owners)
 
-### 4. Layout + global polish
-- `Layout.tsx`: render `<AptBreadcrumbs />` between Header and `<main>` (skip on `/`).
-- `Header.tsx`: remove "Visit app" decorative button OR link it to `/` ; keep Notifications/GitHub but make GitHub link to the APT principles repo (https://github.com/adthomps/apt-principles), Notifications opens a popover with "No new notifications" empty state.
-- `AppSidebar.tsx`: replace the raw `<input>` with a button that opens the command palette (lift palette state to Layout via context or simple shared `useState` + provider; simplest = move palette open state into a tiny `useCommandPalette` hook with module-level event bus, or pass via `Layout` → both Header and Sidebar). Cleanest: add `src/hooks/useCommandPalette.tsx` (Context provider) wrapping Layout; Header/Sidebar both consume.
-- `Index.tsx`: remove the inline hero search (palette is global). Tighten copy. Add a "What's new" strip below quick-access pulling latest 3 changelog entries (import shared changelog data — see #5).
+**Partners & Resellers (target 6+)**
+- Partner onboarding (existing)
+- Commission structure (existing)
+- Marketing assets (existing)
+- Managing sub-accounts (existing)
+- Acquirer/ISO program overview (acquirers)
+- Sub-merchant lifecycle: boarding → activation → offboarding (acquirers)
+- Referral program quickstart (referral partners)
+- Co-branded materials and approvals (resellers)
 
-### 5. Extract shared mock data
-- Move `releases` out of `Changelog.tsx` into `src/content/changelog.ts` so Index can import latest 3.
-- Move `services`/`incidents` out of `Status.tsx` into `src/content/status.ts` (Status page imports; Header status dot can read overall status from same source — future use).
+Each article body uses existing `ArticleBlock` types and includes:
+- Short "Who this is for" paragraph
+- Numbered task flow (`ol`)
+- `callout` for prerequisite or warning
+- "Next step" link rendered by `Article.tsx`
 
-### 6. Footer
-- Add `src/components/Footer.tsx` (rendered in Layout): three columns — Product (links to audience hubs), Resources (Getting Started, API, Changelog), Support (FAQ, Support, Status) — plus a bottom row with "Built on APT principles" linking to the GitHub repo and a small status indicator pulling from `status.ts`.
+## API reference expansion
 
-### 7. Complete states (per APT design rule #4)
-- API reference: empty state when search yields nothing (already partial — keep).
-- Article: 404 fallback when slug not found → reuse `EmptyState` with link back to audience hub.
-- Category index: empty state when category has no articles.
-- Support form: success state already shown via toast; add a visible inline confirmation card after submit (auto-dismiss after 8s) for users who miss the toast.
-- NotFound: rebuild with `EmptyState` + APT styling, links to Home / Search (opens palette) / Support.
+Edit `src/pages/ApiReference.tsx` `groups` to add:
+- **Auth**: refresh token, introspect.
+- **Customers / Sub-merchants**: list, create, update, KYC status.
+- **Payments**: refunds, captures, partial capture, 3DS authentication.
+- **Payouts**: schedules, reversals.
+- **Disputes**: list, submit evidence, accept.
+- **Webhooks**: rotate signing secret, replay event.
+- **Partners**: list sub-merchants, commission report.
 
-### 8. Wire remaining dead actions (no backend, just UX)
-- Businesses sidebar: Contact support → `/support`; Live chat → toast "Live chat coming soon"; Community forum → toast; Downloads buttons → toast "Download starting…".
-- Resellers sidebar: Submit lead/Request demo/Partner support → all link to `/support` with prefilled `?category=partner` (read in Support page to default the Select).
-- Resellers training Start/Continue/Review → toast "Module opening…" (POC scope).
-- Marketing asset download buttons → toast.
+Each endpoint keeps the existing `request`/`response` shape so the detail panel works unchanged. Add a small **error codes** panel at the bottom (table of common 4xx/5xx codes with meaning and remediation).
 
-### 9. APT alignment touches
-- Verify all pages use `AptSection` + `AptCard` (already true).
-- Add `aria-label` on icon-only buttons that are missing them (audit pass).
-- Confirm no decorative gradients/glows (memory rule). Currently clean — keep.
+## UI / navigation changes
 
-## Files (summary)
+- `src/components/AppSidebar.tsx`: rename "Resellers" label to "Partners & Resellers"; keep the route `/resellers`.
+- `src/pages/Index.tsx`: update the third audience card title + features to mention acquirers and referral partners.
+- New `src/components/PersonaTabs.tsx`: APT-styled segmented control bound to `?persona=` via `useSearchParams`. Used in `Developers.tsx`, `Businesses.tsx`, `Resellers.tsx`. "All" tab shows everything; selecting a persona filters via the new `personas` field and updates a short "What you'll find here" blurb.
+- `Article.tsx`: render `personas` tags and a "Next in this path" link when the article registry exposes a `next?: string` slug.
 
-**New:**
-- `src/content/articles.ts`
-- `src/content/changelog.ts`
-- `src/content/status.ts`
-- `src/components/apt/AptBreadcrumbs.tsx`
-- `src/components/Footer.tsx`
-- `src/hooks/useCommandPalette.tsx`
-- `src/pages/Article.tsx`
-- `src/pages/CategoryIndex.tsx`
+## Technical notes
 
-**Edited:**
-- `src/App.tsx` (new routes)
-- `src/components/Layout.tsx` (breadcrumbs, footer, palette provider)
-- `src/components/Header.tsx` (consume palette context, fix dead buttons)
-- `src/components/AppSidebar.tsx` (search → opens palette)
-- `src/pages/Index.tsx` (drop inline search, add What's new strip)
-- `src/pages/Developers.tsx` (wire api topics → articles)
-- `src/pages/Businesses.tsx` (wire guides/categories/sidebar)
-- `src/pages/Resellers.tsx` (wire training/assets/quick actions)
-- `src/pages/Changelog.tsx` (import shared data)
-- `src/pages/Status.tsx` (import shared data)
-- `src/pages/Support.tsx` (read `?category=` query, show inline confirmation)
-- `src/pages/NotFound.tsx` (APT EmptyState style)
+- All filtering stays client-side against the static registry — no backend.
+- Reuse `useArticleFilters` for keyword + read-time; persona filter composes on top.
+- Keep APT tokens and primitives (`AptSection`, `AptCard`, `AptTag`, `EmptyState`); no new colors, gradients, or nested cards.
+- Define loading/empty/error states for filtered lists (empty → `EmptyState` with reset action).
+- No new dependencies. No schema, no Cloud changes.
 
-## Out of scope (for next iteration)
-- Real authentication / Lovable Cloud persistence
-- Real article search indexing (palette only navigates routes today)
-- Light mode toggle
-- i18n
+## Files
+
+**New**
+- `src/components/PersonaTabs.tsx`
+
+**Edit**
+- `src/content/articles.ts` (add `personas`, optional `next`, add ~12 new articles)
+- `src/pages/ApiReference.tsx` (more endpoints + error codes panel)
+- `src/pages/Developers.tsx`, `src/pages/Businesses.tsx`, `src/pages/Resellers.tsx` (persona tabs + persona-aware copy)
+- `src/pages/Article.tsx` (persona chips + "Next step")
+- `src/components/AppSidebar.tsx` (label rename)
+- `src/pages/Index.tsx` (third audience card copy)
+
+## Validation
+
+- Click each hub, switch personas, confirm article list updates and URL reflects `?persona=`.
+- Open 2–3 new articles per hub, confirm "Next step" navigates correctly.
+- Search the API reference for new endpoints (e.g., `refund`, `sub-merchant`) and confirm detail panel renders.
+- Confirm sidebar shows "Partners & Resellers" and `/resellers` still resolves.
+- Empty-state appears when keyword filter excludes all results.
+
+## Out of scope
+
+- No real auth, no backend persistence beyond existing `localStorage` feedback.
+- No new top-level routes; partner content stays under `/resellers`.
+- No visual redesign — APT tokens and existing components only.
