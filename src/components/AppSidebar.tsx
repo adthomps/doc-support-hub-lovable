@@ -30,7 +30,7 @@ import { useCommandPalette } from "@/hooks/useCommandPalette"
 const audienceItems = [
   { title: "Developers", url: "/developers", icon: Code, description: "APIs, SDKs & Integration" },
   { title: "Businesses", url: "/businesses", icon: Users, description: "Merchant guides & operations" },
-  { title: "Resellers", url: "/resellers", icon: Shield, description: "Partner Resources" },
+  { title: "Partners & Resellers", url: "/resellers", icon: Shield, description: "Partner, acquirer & referral" },
 ]
 
 const supportItems = [
