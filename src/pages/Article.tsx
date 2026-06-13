@@ -9,7 +9,7 @@ import { EmptyState } from "@/components/apt/EmptyState"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { useArticleFeedback } from "@/hooks/useArticleFeedback"
-import { findArticle, articlesByAudience, type Audience, type ArticleBlock } from "@/content/articles"
+import { findArticle, articlesByAudience, personasByAudience, type Audience, type ArticleBlock } from "@/content/articles"
 
 const audienceLabel: Record<Audience, string> = {
   developers: "Developers",
@@ -105,9 +105,13 @@ export default function Article() {
       <div className="grid lg:grid-cols-3 gap-6">
         <article className="lg:col-span-2 space-y-6">
           <AptCard variant="hero" padding="feature">
-            <div className="flex items-center gap-2 mb-3">
+            <div className="flex items-center gap-2 mb-3 flex-wrap">
               <AptTag variant="accent">{audienceLabel[aud]}</AptTag>
               <AptTag variant="muted">{article.categoryLabel}</AptTag>
+              {article.personas?.map((pid) => {
+                const meta = personasByAudience[aud].find((p) => p.id === pid)
+                return meta ? <AptTag key={pid} variant="default">{meta.label}</AptTag> : null
+              })}
             </div>
             <h1 className="text-3xl font-semibold tracking-tight text-foreground">{article.title}</h1>
             <p className="text-base text-muted-foreground mt-2 leading-relaxed">{article.summary}</p>
@@ -123,6 +127,24 @@ export default function Article() {
               {article.body.map((b, i) => <Block key={i} b={b} />)}
             </AptCardContent>
           </AptCard>
+
+          {article.next && (() => {
+            const nextArticle = findArticle(aud, article.next)
+            if (!nextArticle) return null
+            return (
+              <Link to={`/${aud}/articles/${nextArticle.slug}`}>
+                <AptCard variant="interactive" padding="default" className="flex items-center justify-between">
+                  <div className="min-w-0">
+                    <p className="text-xs uppercase tracking-wide text-muted-foreground">Next in this path</p>
+                    <p className="text-sm font-semibold text-foreground mt-0.5 truncate">{nextArticle.title}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5 truncate">{nextArticle.summary}</p>
+                  </div>
+                  <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0 ml-3" />
+                </AptCard>
+              </Link>
+            )
+          })()}
+
 
           <AptCard variant="subtle" padding="dense">
             <div className="space-y-3">

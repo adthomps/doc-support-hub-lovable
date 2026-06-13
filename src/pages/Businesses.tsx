@@ -1,3 +1,4 @@
+import { useMemo } from "react"
 import { Link } from "react-router-dom"
 import { BookOpen, Video, HelpCircle, ArrowRight } from "lucide-react"
 import { toast } from "sonner"
@@ -7,7 +8,8 @@ import { AptCard, AptCardHeader, AptCardTitle, AptCardContent } from "@/componen
 import { AptTag } from "@/components/apt/AptTag"
 import { EmptyState } from "@/components/apt/EmptyState"
 import { useArticleFilters, ArticleFiltersBar } from "@/hooks/useArticleFilters"
-import { articlesByAudience, categoriesFor } from "@/content/articles"
+import { PersonaTabs, usePersona } from "@/components/PersonaTabs"
+import { articlesByPersona, categoriesFor } from "@/content/articles"
 
 const videoTutorials = [
   { title: "Merchant dashboard tour", duration: "10:12" },
@@ -16,7 +18,8 @@ const videoTutorials = [
 ]
 
 export default function Businesses() {
-  const articles = articlesByAudience("businesses")
+  const { persona, setPersona, description } = usePersona("businesses")
+  const articles = useMemo(() => articlesByPersona("businesses", persona), [persona])
   const categories = categoriesFor("businesses")
   const filters = useArticleFilters(articles)
 
@@ -40,6 +43,8 @@ export default function Businesses() {
               </AptCardTitle>
             </AptCardHeader>
             <AptCardContent className="space-y-3">
+              <PersonaTabs audience="businesses" persona={persona} onChange={setPersona} />
+              {description && <p className="text-xs text-muted-foreground -mt-1">{description}</p>}
               <ArticleFiltersBar state={filters} />
               {filters.filtered.length === 0 ? (
                 <EmptyState title="No matching guides" description="Try a different keyword or change the read-time filter." />

@@ -24,9 +24,11 @@ type Endpoint = {
 const groups: { id: string; title: string; endpoints: Endpoint[] }[] = [
   {
     id: "auth",
-    title: "Auth",
+    title: "Auth & security",
     endpoints: [
       { method: "POST", path: "/v1/auth/token", description: "Exchange credentials for an access token.", request: `{ "client_id": "...", "client_secret": "..." }`, response: `{ "access_token": "eyJ...", "expires_in": 3600 }` },
+      { method: "POST", path: "/v1/auth/refresh", description: "Refresh an access token before it expires.", request: `{ "refresh_token": "rt_..." }`, response: `{ "access_token": "eyJ...", "expires_in": 3600 }` },
+      { method: "POST", path: "/v1/auth/introspect", description: "Inspect a token's scopes and validity.", request: `{ "token": "eyJ..." }`, response: `{ "active": true, "scope": "read:users write:charges" }` },
       { method: "POST", path: "/v1/auth/revoke", description: "Revoke an access token.", request: `{ "token": "eyJ..." }`, response: `{ "revoked": true }` },
     ],
   },
@@ -41,11 +43,41 @@ const groups: { id: string; title: string; endpoints: Endpoint[] }[] = [
     ],
   },
   {
+    id: "sub-merchants",
+    title: "Sub-merchants (Partner API)",
+    endpoints: [
+      { method: "POST", path: "/v1/partners/sub_merchants", description: "Board a new sub-merchant under your partner ID.", request: `{ "business_name": "Acme", "country": "US", "mcc": "5812" }`, response: `{ "id": "subm_123", "status": "pending_kyc" }` },
+      { method: "GET", path: "/v1/partners/sub_merchants", description: "List sub-merchants in your portfolio.", response: `{ "data": [{ "id": "subm_123", "status": "active" }] }` },
+      { method: "GET", path: "/v1/partners/sub_merchants/:id", description: "Retrieve a sub-merchant and KYC status.", response: `{ "id": "subm_123", "status": "active", "kyc": "verified" }` },
+      { method: "PUT", path: "/v1/partners/sub_merchants/:id", description: "Update sub-merchant profile or pricing template.", request: `{ "pricing_template": "tpl_gold" }`, response: `{ "id": "subm_123", "pricing_template": "tpl_gold" }` },
+    ],
+  },
+  {
     id: "payments",
     title: "Payments",
     endpoints: [
-      { method: "POST", path: "/v1/charges", description: "Create a charge.", request: `{ "amount": 1999, "currency": "usd" }`, response: `{ "id": "ch_1", "status": "succeeded" }` },
+      { method: "POST", path: "/v1/charges", description: "Create a charge (with optional 3DS).", request: `{ "amount": 1999, "currency": "usd", "source": "tok_..." }`, response: `{ "id": "ch_1", "status": "succeeded" }` },
+      { method: "POST", path: "/v1/charges/:id/capture", description: "Capture a previously authorized charge (supports partial).", request: `{ "amount": 1500 }`, response: `{ "id": "ch_1", "captured": 1500 }` },
+      { method: "POST", path: "/v1/refunds", description: "Refund a charge in full or part.", request: `{ "charge": "ch_1", "amount": 500 }`, response: `{ "id": "re_1", "status": "succeeded" }` },
+      { method: "POST", path: "/v1/3ds/authenticate", description: "Trigger 3D Secure authentication for a payment method.", request: `{ "source": "tok_..." }`, response: `{ "status": "requires_action", "redirect_url": "https://..." }` },
+    ],
+  },
+  {
+    id: "payouts",
+    title: "Payouts",
+    endpoints: [
       { method: "GET", path: "/v1/payouts", description: "List payouts.", response: `{ "data": [{ "id": "po_1", "amount": 12000 }] }` },
+      { method: "PUT", path: "/v1/payouts/schedule", description: "Update payout schedule (daily, weekly, monthly).", request: `{ "interval": "weekly", "day": "monday" }`, response: `{ "interval": "weekly", "day": "monday" }` },
+      { method: "POST", path: "/v1/payouts/:id/reverse", description: "Reverse a payout that hasn't settled.", response: `{ "id": "po_1", "status": "reversed" }` },
+    ],
+  },
+  {
+    id: "disputes",
+    title: "Disputes",
+    endpoints: [
+      { method: "GET", path: "/v1/disputes", description: "List open and resolved disputes.", response: `{ "data": [{ "id": "dp_1", "status": "needs_response" }] }` },
+      { method: "POST", path: "/v1/disputes/:id/evidence", description: "Submit dispute evidence.", request: `{ "receipt_url": "...", "shipping_proof": "..." }`, response: `{ "id": "dp_1", "status": "under_review" }` },
+      { method: "POST", path: "/v1/disputes/:id/accept", description: "Accept the dispute and skip evidence.", response: `{ "id": "dp_1", "status": "lost" }` },
     ],
   },
   {
@@ -54,9 +86,30 @@ const groups: { id: string; title: string; endpoints: Endpoint[] }[] = [
     endpoints: [
       { method: "POST", path: "/v1/webhooks", description: "Register a webhook endpoint.", request: `{ "url": "https://...", "events": ["charge.succeeded"] }`, response: `{ "id": "wh_1" }` },
       { method: "GET", path: "/v1/webhooks", description: "List webhook endpoints.", response: `{ "data": [{ "id": "wh_1" }] }` },
+      { method: "POST", path: "/v1/webhooks/:id/rotate", description: "Rotate the signing secret for a webhook endpoint.", response: `{ "id": "wh_1", "secret": "whsec_..." }` },
+      { method: "POST", path: "/v1/events/:id/replay", description: "Replay a delivered event for debugging.", response: `{ "event": "evt_1", "delivered": true }` },
       { method: "DELETE", path: "/v1/webhooks/:id", description: "Delete a webhook.", response: `{ "deleted": true }` },
     ],
   },
+  {
+    id: "reports",
+    title: "Partner reports",
+    endpoints: [
+      { method: "GET", path: "/v1/partners/commissions", description: "Commission report for a date range.", response: `{ "period": "2025-05", "total": 482300, "lines": [] }` },
+      { method: "GET", path: "/v1/partners/residuals", description: "Residual statements per sub-merchant.", response: `{ "data": [{ "sub_merchant": "subm_123", "amount": 12300 }] }` },
+    ],
+  },
+]
+
+const errorCodes: { code: string; meaning: string; remediation: string }[] = [
+  { code: "400", meaning: "Bad request — payload validation failed.", remediation: "Inspect the `errors` array in the response body." },
+  { code: "401", meaning: "Missing or invalid bearer token.", remediation: "Regenerate the key and confirm the Authorization header." },
+  { code: "403", meaning: "Authenticated but not authorized for this resource.", remediation: "Check the role/scope on the key." },
+  { code: "404", meaning: "Resource does not exist or has been deleted.", remediation: "Verify the ID and the workspace it belongs to." },
+  { code: "409", meaning: "Conflict — idempotency key reused with a different payload.", remediation: "Use a fresh idempotency key per logical request." },
+  { code: "422", meaning: "Semantically invalid (e.g. unsupported currency).", remediation: "Refer to the error detail and adjust the field." },
+  { code: "429", meaning: "Rate limit exceeded.", remediation: "Back off using the `Retry-After` header with jitter." },
+  { code: "500", meaning: "Unexpected server error.", remediation: "Retry idempotently; contact support if persistent." },
 ]
 
 const methodVariant: Record<Method, AptTagProps["variant"]> = {
@@ -146,7 +199,36 @@ export default function ApiReference() {
               ))}
             </Accordion>
           )}
+
+          <AptCard variant="default">
+            <AptCardHeader>
+              <AptCardTitle className="text-base">Error codes</AptCardTitle>
+            </AptCardHeader>
+            <AptCardContent>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="text-left text-xs font-medium uppercase tracking-wide text-muted-foreground border-b border-border">
+                      <th className="py-2 pr-4">Code</th>
+                      <th className="py-2 pr-4">Meaning</th>
+                      <th className="py-2">Remediation</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {errorCodes.map((e) => (
+                      <tr key={e.code} className="border-b border-border/60 last:border-0 align-top">
+                        <td className="py-2 pr-4"><AptTag variant={e.code.startsWith("5") ? "warning" : "muted"} className="font-mono">{e.code}</AptTag></td>
+                        <td className="py-2 pr-4 text-foreground">{e.meaning}</td>
+                        <td className="py-2 text-muted-foreground">{e.remediation}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </AptCardContent>
+          </AptCard>
         </div>
+
 
         <aside className="space-y-4">
           <AptCard variant="elevated">

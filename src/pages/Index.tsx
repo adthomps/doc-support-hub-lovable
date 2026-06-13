@@ -24,11 +24,11 @@ const audiences = [
     eyebrow: "Merchant",
   },
   {
-    title: "Resellers",
-    description: "Partner resources, training materials, and business tools.",
+    title: "Partners & Resellers",
+    description: "Resources for resellers, acquirers/ISOs, and referral partners.",
     icon: Shield,
     href: "/resellers",
-    features: ["Partner portal", "Training", "Marketing assets", "Support tools"],
+    features: ["Partner onboarding", "Acquirer & ISO program", "Sub-merchant lifecycle", "Referral & marketing"],
     eyebrow: "Partner",
   },
 ]

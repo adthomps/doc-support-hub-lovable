@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { Link } from "react-router-dom"
 import { FileText, Zap, ExternalLink, Copy, Check, ArrowRight } from "lucide-react"
 import { toast } from "sonner"
@@ -8,7 +8,8 @@ import { AptCard, AptCardHeader, AptCardTitle, AptCardContent } from "@/componen
 import { AptTag } from "@/components/apt/AptTag"
 import { EmptyState } from "@/components/apt/EmptyState"
 import { useArticleFilters, ArticleFiltersBar } from "@/hooks/useArticleFilters"
-import { articlesByAudience, categoriesFor } from "@/content/articles"
+import { PersonaTabs, usePersona } from "@/components/PersonaTabs"
+import { articlesByPersona, categoriesFor } from "@/content/articles"
 
 const codeExample = `curl -X POST "https://api.example.com/v1/users" \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
@@ -23,7 +24,8 @@ const tools = ["API explorer", "Postman collection", "OpenAPI spec"]
 
 export default function Developers() {
   const [copied, setCopied] = useState(false)
-  const articles = articlesByAudience("developers")
+  const { persona, setPersona, description } = usePersona("developers")
+  const articles = useMemo(() => articlesByPersona("developers", persona), [persona])
   const categories = categoriesFor("developers")
   const filters = useArticleFilters(articles)
 
@@ -87,6 +89,8 @@ export default function Developers() {
               </AptCardTitle>
             </AptCardHeader>
             <AptCardContent className="space-y-3">
+              <PersonaTabs audience="developers" persona={persona} onChange={setPersona} />
+              {description && <p className="text-xs text-muted-foreground -mt-1">{description}</p>}
               <ArticleFiltersBar state={filters} />
               {filters.filtered.length === 0 ? (
                 <EmptyState title="No matching articles" description="Try a different keyword or change the read-time filter." />

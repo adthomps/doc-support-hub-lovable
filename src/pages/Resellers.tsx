@@ -1,3 +1,4 @@
+import { useMemo } from "react"
 import { Link } from "react-router-dom"
 import { BookOpen, HelpCircle, Megaphone, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -6,10 +7,12 @@ import { AptCard, AptCardHeader, AptCardTitle, AptCardContent } from "@/componen
 import { AptTag } from "@/components/apt/AptTag"
 import { EmptyState } from "@/components/apt/EmptyState"
 import { useArticleFilters, ArticleFiltersBar } from "@/hooks/useArticleFilters"
-import { articlesByAudience, categoriesFor } from "@/content/articles"
+import { PersonaTabs, usePersona } from "@/components/PersonaTabs"
+import { articlesByPersona, categoriesFor } from "@/content/articles"
 
 export default function Resellers() {
-  const articles = articlesByAudience("resellers")
+  const { persona, setPersona, description } = usePersona("resellers")
+  const articles = useMemo(() => articlesByPersona("resellers", persona), [persona])
   const categories = categoriesFor("resellers")
   const filters = useArticleFilters(articles)
   const supportLink = "/support?category=partner"
@@ -32,6 +35,8 @@ export default function Resellers() {
               </AptCardTitle>
             </AptCardHeader>
             <AptCardContent className="space-y-3">
+              <PersonaTabs audience="resellers" persona={persona} onChange={setPersona} />
+              {description && <p className="text-xs text-muted-foreground -mt-1">{description}</p>}
               <ArticleFiltersBar state={filters} />
               {filters.filtered.length === 0 ? (
                 <EmptyState title="No matching guides" description="Try a different keyword or change the read-time filter." />
