@@ -89,6 +89,8 @@ export default function Developers() {
               </AptCardTitle>
             </AptCardHeader>
             <AptCardContent className="space-y-3">
+              <PersonaTabs audience="developers" persona={persona} onChange={setPersona} />
+              {description && <p className="text-xs text-muted-foreground -mt-1">{description}</p>}
               <ArticleFiltersBar state={filters} />
               {filters.filtered.length === 0 ? (
                 <EmptyState title="No matching articles" description="Try a different keyword or change the read-time filter." />
