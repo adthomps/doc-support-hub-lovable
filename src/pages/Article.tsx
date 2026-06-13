@@ -128,6 +128,24 @@ export default function Article() {
             </AptCardContent>
           </AptCard>
 
+          {article.next && (() => {
+            const nextArticle = findArticle(aud, article.next)
+            if (!nextArticle) return null
+            return (
+              <Link to={`/${aud}/articles/${nextArticle.slug}`}>
+                <AptCard variant="interactive" padding="default" className="flex items-center justify-between">
+                  <div className="min-w-0">
+                    <p className="text-xs uppercase tracking-wide text-muted-foreground">Next in this path</p>
+                    <p className="text-sm font-semibold text-foreground mt-0.5 truncate">{nextArticle.title}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5 truncate">{nextArticle.summary}</p>
+                  </div>
+                  <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0 ml-3" />
+                </AptCard>
+              </Link>
+            )
+          })()}
+
+
           <AptCard variant="subtle" padding="dense">
             <div className="space-y-3">
               <div className="flex items-center justify-between gap-3 flex-wrap">
