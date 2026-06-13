@@ -199,7 +199,36 @@ export default function ApiReference() {
               ))}
             </Accordion>
           )}
+
+          <AptCard variant="default">
+            <AptCardHeader>
+              <AptCardTitle className="text-base">Error codes</AptCardTitle>
+            </AptCardHeader>
+            <AptCardContent>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="text-left text-xs font-medium uppercase tracking-wide text-muted-foreground border-b border-border">
+                      <th className="py-2 pr-4">Code</th>
+                      <th className="py-2 pr-4">Meaning</th>
+                      <th className="py-2">Remediation</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {errorCodes.map((e) => (
+                      <tr key={e.code} className="border-b border-border/60 last:border-0 align-top">
+                        <td className="py-2 pr-4"><AptTag variant={e.code.startsWith("5") ? "warning" : "muted"} className="font-mono">{e.code}</AptTag></td>
+                        <td className="py-2 pr-4 text-foreground">{e.meaning}</td>
+                        <td className="py-2 text-muted-foreground">{e.remediation}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </AptCardContent>
+          </AptCard>
         </div>
+
 
         <aside className="space-y-4">
           <AptCard variant="elevated">
