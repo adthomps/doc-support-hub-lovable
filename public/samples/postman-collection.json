@@ -1,0 +1,71 @@
+{
+  "info": {
+    "name": "APT Gateway REST API - Quickstart",
+    "_postman_id": "apt-gateway-quickstart",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "https://api.example.com" },
+    { "key": "apiKey", "value": "sk_test_replace_me" }
+  ],
+  "item": [
+    {
+      "name": "Create payment intent",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{apiKey}}" },
+          { "key": "Idempotency-Key", "value": "{{$guid}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": { "raw": "{{baseUrl}}/v1/payment-intents", "host": ["{{baseUrl}}"], "path": ["v1", "payment-intents"] },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"amount\": 1299,\n  \"currency\": \"USD\",\n  \"capture_method\": \"manual\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Capture payment intent",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{apiKey}}" },
+          { "key": "Idempotency-Key", "value": "{{$guid}}" }
+        ],
+        "url": { "raw": "{{baseUrl}}/v1/payment-intents/pi_123/capture", "host": ["{{baseUrl}}"], "path": ["v1", "payment-intents", "pi_123", "capture"] }
+      }
+    },
+    {
+      "name": "Create refund",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{apiKey}}" },
+          { "key": "Idempotency-Key", "value": "{{$guid}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": { "raw": "{{baseUrl}}/v1/refunds", "host": ["{{baseUrl}}"], "path": ["v1", "refunds"] },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"transaction\": \"txn_123\",\n  \"amount\": 500\n}"
+        }
+      }
+    },
+    {
+      "name": "Register webhook endpoint",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{apiKey}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": { "raw": "{{baseUrl}}/v1/webhooks/endpoints", "host": ["{{baseUrl}}"], "path": ["v1", "webhooks", "endpoints"] },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"url\": \"https://example.com/hook\",\n  \"events\": [\"payment.authorized\", \"refund.succeeded\"]\n}"
+        }
+      }
+    }
+  ]
+}

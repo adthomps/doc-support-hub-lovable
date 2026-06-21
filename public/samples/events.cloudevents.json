@@ -1,0 +1,57 @@
+[
+  {
+    "id": "evt_001",
+    "type": "payment.authorized",
+    "source": "apt.gateway",
+    "specversion": "1.0",
+    "time": "2026-06-21T14:12:00Z",
+    "subject": "txn_123",
+    "data": {
+      "transaction_id": "txn_123",
+      "payment_intent_id": "pi_123",
+      "amount": 1299,
+      "currency": "USD",
+      "status": "authorized"
+    }
+  },
+  {
+    "id": "evt_002",
+    "type": "payment.captured",
+    "source": "apt.gateway",
+    "specversion": "1.0",
+    "time": "2026-06-21T14:14:08Z",
+    "subject": "txn_123",
+    "data": {
+      "transaction_id": "txn_123",
+      "amount_captured": 1299,
+      "currency": "USD"
+    }
+  },
+  {
+    "id": "evt_003",
+    "type": "refund.succeeded",
+    "source": "apt.gateway",
+    "specversion": "1.0",
+    "time": "2026-06-22T10:01:11Z",
+    "subject": "ref_123",
+    "data": {
+      "refund_id": "ref_123",
+      "transaction_id": "txn_123",
+      "amount": 500,
+      "status": "succeeded"
+    }
+  },
+  {
+    "id": "evt_004",
+    "type": "risk.review_required",
+    "source": "apt.gateway",
+    "specversion": "1.0",
+    "time": "2026-06-22T11:30:00Z",
+    "subject": "txn_125",
+    "data": {
+      "transaction_id": "txn_125",
+      "score": 84,
+      "signals": ["high_velocity", "mismatched_avs"]
+    }
+  }
+]
