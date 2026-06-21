@@ -93,7 +93,7 @@ export default function Index() {
                 </div>
                 <h3 className="text-lg font-semibold text-foreground mb-1.5">{card.title}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed mb-5">{card.description}</p>
-                <ul className="space-y-2 mb-6">
+                <ul className="space-y-2 mb-5">
                   {card.features.map((feature) => (
                     <li key={feature} className="flex items-center gap-2 text-sm text-muted-foreground">
                       <span className="h-1 w-1 rounded-full bg-muted-foreground/60" />

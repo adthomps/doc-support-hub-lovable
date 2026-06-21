@@ -52,12 +52,12 @@ export default function Developers() {
                 <Zap className="h-4 w-4 text-muted-foreground" /> Quick start
               </AptCardTitle>
             </AptCardHeader>
-            <AptCardContent className="space-y-5">
+            <AptCardContent className="space-y-4">
               <p className="text-sm text-muted-foreground leading-relaxed">
                 Get up and running with the API in minutes.
               </p>
 
-              <ol className="space-y-2.5">
+              <ol className="space-y-2">
                 {["Get your API key from the dashboard", "Install the SDK or call the API directly", "Make your first request"].map((step, i) => (
                   <li key={i} className="flex items-center gap-3 text-sm text-foreground">
                     <span className="flex h-6 w-6 items-center justify-center rounded-md border border-border bg-secondary text-xs font-medium text-foreground">
@@ -90,7 +90,7 @@ export default function Developers() {
             </AptCardHeader>
             <AptCardContent className="space-y-3">
               <PersonaTabs audience="developers" persona={persona} onChange={setPersona} />
-              {description && <p className="text-xs text-muted-foreground -mt-1">{description}</p>}
+              {description && <p className="text-xs text-muted-foreground">{description}</p>}
               <ArticleFiltersBar state={filters} />
               {filters.filtered.length === 0 ? (
                 <EmptyState title="No matching articles" description="Try a different keyword or change the read-time filter." />

@@ -72,7 +72,7 @@ export default function Faq() {
       description="Answers grouped by audience. Use the search to filter across all tabs."
     >
       <div className="grid lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-4">
+        <div className="lg:col-span-2 space-y-6">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input placeholder="Search FAQs…" value={query} onChange={(e) => setQuery(e.target.value)} className="pl-10" />

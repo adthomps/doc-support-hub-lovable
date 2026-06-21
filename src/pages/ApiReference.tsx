@@ -153,7 +153,7 @@ export default function ApiReference() {
       actions={<AptTag variant="accent">Technical</AptTag>}
     >
       <div className="grid lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-4">
+        <div className="lg:col-span-2 space-y-6">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
@@ -230,7 +230,7 @@ export default function ApiReference() {
         </div>
 
 
-        <aside className="space-y-4">
+        <aside className="space-y-6">
           <AptCard variant="elevated">
             <AptCardHeader>
               <AptCardTitle className="text-base flex items-center gap-2">
