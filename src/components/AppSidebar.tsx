@@ -1,15 +1,25 @@
 import { useState } from "react"
-import { 
-  BookOpen, 
-  Code, 
-  Users, 
-  HeadphonesIcon, 
-  Search, 
-  FileText, 
+import {
+  BookOpen,
+  Code,
+  Users,
+  HeadphonesIcon,
+  Search,
+  FileText,
   MessageCircle,
   Shield,
   Zap,
-  Settings
+  Settings,
+  Layers,
+  Webhook,
+  Sparkles,
+  AlertTriangle,
+  GitBranch,
+  KeyRound,
+  Repeat,
+  GitMerge,
+  Network,
+  ScrollText,
 } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
 
@@ -41,8 +51,27 @@ const supportItems = [
 
 const resourceItems = [
   { title: "Getting Started", url: "/getting-started", icon: BookOpen },
-  { title: "API Reference", url: "/api", icon: FileText },
+  { title: "API Reference", url: "/api/reference", icon: FileText },
   { title: "Changelog", url: "/changelog", icon: Settings },
+]
+
+const apiItems = [
+  { title: "Overview", url: "/api", icon: Layers },
+  { title: "REST resources", url: "/api/rest", icon: FileText },
+  { title: "JSON-RPC methods", url: "/api/rpc", icon: GitMerge },
+  { title: "Events", url: "/api/events", icon: Zap },
+  { title: "Webhooks", url: "/api/webhooks", icon: Webhook },
+  { title: "AI tools", url: "/api/ai-tools", icon: Sparkles },
+  { title: "Errors", url: "/api/errors", icon: AlertTriangle },
+  { title: "Compatibility", url: "/api/compatibility", icon: GitBranch },
+]
+
+const architectureItems = [
+  { title: "ADRs", url: "/architecture/adrs", icon: ScrollText },
+  { title: "Boundaries", url: "/architecture/boundaries", icon: Network },
+  { title: "Security model", url: "/architecture/security", icon: KeyRound },
+  { title: "Idempotency", url: "/architecture/idempotency", icon: Repeat },
+  { title: "Versioning", url: "/architecture/versioning", icon: GitBranch },
 ]
 
 export function AppSidebar() {
