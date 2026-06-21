@@ -42,14 +42,14 @@ export default function Changelog() {
       title="Changelog"
       description="Recent platform updates across the API, apps, UI, SDKs, and docs."
     >
-      <div className="space-y-4 mb-6">
-        <Input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search releases by title, version, or notes…"
-          className="max-w-md"
-        />
-        <div className="space-y-2">
+      <div className="space-y-6">
+        <div className="space-y-3">
+          <Input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search releases by title, version, or notes…"
+            className="max-w-md"
+          />
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground mr-1">Type</span>
             {kindFilters.map((f) => (
@@ -66,9 +66,8 @@ export default function Changelog() {
               </button>
             ))}
           </div>
+          <p className="text-xs text-muted-foreground">{visible.length} of {releases.length} releases</p>
         </div>
-        <p className="text-xs text-muted-foreground">{visible.length} of {releases.length} releases</p>
-      </div>
 
       {visible.length === 0 ? (
         <EmptyState title="No matching releases" description="Try clearing filters or adjusting your search." />
@@ -100,6 +99,7 @@ export default function Changelog() {
           ))}
         </Accordion>
       )}
+      </div>
     </AptSection>
   )
 }

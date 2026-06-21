@@ -1,109 +1,66 @@
-## Goal
+# APT spacing audit & alignment
 
-Cover more user types within the existing 3-hub structure and deepen the documentation so reviewers can click through realistic, persona-targeted content.
+## Audit findings
 
-- Keep top-level hubs: **Developers**, **Businesses**, **Resellers** (renamed in sidebar to **Partners & Resellers**).
-- Inside each hub, add **sub-persona tabs** that filter guides and surface "task flows".
-- Reach **4–6 guides per persona** with step-by-step bodies, prerequisites, and "next step" chaining.
-- Expand the **API reference** and add **integration guides**, **auth & security**, and **acquirer/partner technical docs**.
+Scope: every page in `src/pages/*` plus shared layout primitives (`AptSection`, `AptCard`, `Footer`, `Header`, `AptBreadcrumbs`).
 
-## Sub-personas per hub
+What is already correct
+- All pages wrap content in `AptSection` with `spacing="compact"` (hubs/docs/support) or `spacing="default"` (Index landing).
+- All cards are `AptCard` (default / interactive / subtle / hero / feature). No raw `<div>` cards.
+- No hardcoded colors found (`text-white`, `bg-black`, `#hex` in components).
+- Grid containers consistently use `grid lg:grid-cols-3 gap-6`.
 
-- **Developers** → Integrators (build new), Platform engineers (operate/scale), Partner/Acquirer developers (sub-merchant APIs).
-- **Businesses** → Merchants (day-to-day), Business owners (finance/strategy), Operations (disputes/fraud/payouts).
-- **Partners & Resellers** → Resellers, Acquirers / ISOs, Referral partners.
+Inconsistencies to fix
+1. Main column vertical rhythm — mixed:
+   - `space-y-6`: Developers, Businesses, Resellers, GettingStarted, Article, Status.
+   - `space-y-4`: Support, Faq, ApiReference, Changelog.
+   Rule: every "main column that stacks cards" uses `space-y-6`.
 
-Sub-persona selection filters the article list and recommended task flows; the URL keeps a `?persona=` query so links remain shareable.
+2. Side aside rhythm — mostly `space-y-6`, but `ApiReference.tsx` aside uses `space-y-4`. Align to `space-y-6`.
 
-## Content additions (registry-driven)
+3. `AptCardContent` inner rhythm — mixed `space-y-2 / 3 / 4 / 5`. Adopt a 3-tier rule:
+   - `space-y-2` for tight link/button stacks (nav lists, FAQ links, CTA stacks).
+   - `space-y-3` for mixed metadata + list rows (article rows, status rows).
+   - `space-y-4` for prose / form blocks / numbered procedures.
+   Replace one-off `space-y-5` (Developers) and `space-y-2.5` (Developers ol) with `space-y-4` / `space-y-2`.
 
-Extend `src/content/articles.ts` with a `personas?: string[]` tag on each article plus new entries:
+4. Off-scale spacing — remove:
+   - `Resellers.tsx` `-mt-1` on persona description.
+   - `Article.tsx` hero uses `mb-3 / mt-2 / mt-4` ad-hoc; wrap header content in `space-y-3` stack.
+   - `Index.tsx` `space-y-2 mb-6` list — switch to `space-y-2` + trailing `mt-6` button.
 
-**Developers (target 6+)**
-- Quickstart: first API call (integrators)
-- Hosted checkout integration (integrators) — use case guide
-- Server-to-server payments (integrators)
-- Webhooks deep dive + retries (platform eng)
-- Auth & security: API keys, OAuth, request signing, IP allowlists, PCI scope (platform eng)
-- Sub-merchant onboarding API (acquirer devs)
-- Revenue share / split payments API (acquirer devs)
+5. Page intros — `Changelog.tsx` currently renders its own `space-y-4 mb-6` header above the AptSection content area. Move title/description/filters into the existing `AptSection` `eyebrow/title/description/actions` props so all pages share the same header pattern.
 
-**Businesses (target 6+)**
-- Onboarding your business (existing) — add prerequisites + next step
-- Accepting payments (existing) — expand methods, regions
-- Managing payouts (existing) — add reconciliation flow
-- Handling disputes (existing) — add evidence checklist
-- Invoicing and recurring billing (business owners)
-- Fraud and risk controls (operations)
-- Team roles and permissions (business owners)
+6. `Support.tsx` `TabsContent` uses `mt-4 space-y-4`; align inner stack to `space-y-6` so it matches the main column rhythm (tabs sit inside the main column).
 
-**Partners & Resellers (target 6+)**
-- Partner onboarding (existing)
-- Commission structure (existing)
-- Marketing assets (existing)
-- Managing sub-accounts (existing)
-- Acquirer/ISO program overview (acquirers)
-- Sub-merchant lifecycle: boarding → activation → offboarding (acquirers)
-- Referral program quickstart (referral partners)
-- Co-branded materials and approvals (resellers)
+7. `AptSection.tsx` header gap — currently `mb-10` + internal `gap-3`. Keep as-is (it is the canonical primitive); the fixes above flow into it.
 
-Each article body uses existing `ArticleBlock` types and includes:
-- Short "Who this is for" paragraph
-- Numbered task flow (`ol`)
-- `callout` for prerequisite or warning
-- "Next step" link rendered by `Article.tsx`
+## Spacing standard (documented in plan.md)
 
-## API reference expansion
+```
+Section spacing      AptSection spacing="compact" (hubs/docs) | "default" (landing)
+Section header       AptSection eyebrow/title/description/actions (no custom header)
+Two-col grid         grid lg:grid-cols-3 gap-6
+Main column stack    space-y-6
+Aside stack          space-y-6
+Card inner — tight   space-y-2  (link/CTA stacks)
+Card inner — list    space-y-3  (rows with metadata)
+Card inner — prose   space-y-4  (paragraphs, forms, steps)
+List items inside ul/ol  space-y-1.5
+Card padding         AptCard padding= dense | default | feature (no ad-hoc p-*)
+No off-scale         no -mt-*, no space-y-2.5 / 5, no per-element mt-2/mt-3/mt-4 stacks
+```
 
-Edit `src/pages/ApiReference.tsx` `groups` to add:
-- **Auth**: refresh token, introspect.
-- **Customers / Sub-merchants**: list, create, update, KYC status.
-- **Payments**: refunds, captures, partial capture, 3DS authentication.
-- **Payouts**: schedules, reversals.
-- **Disputes**: list, submit evidence, accept.
-- **Webhooks**: rotate signing secret, replay event.
-- **Partners**: list sub-merchants, commission report.
+## Files to edit
 
-Each endpoint keeps the existing `request`/`response` shape so the detail panel works unchanged. Add a small **error codes** panel at the bottom (table of common 4xx/5xx codes with meaning and remediation).
+- `src/pages/Support.tsx` — main column `space-y-4` → `space-y-6`; TabsContent `space-y-4` → `space-y-6`.
+- `src/pages/Faq.tsx` — main column `space-y-4` → `space-y-6`.
+- `src/pages/ApiReference.tsx` — main column `space-y-4` → `space-y-6`; aside `space-y-4` → `space-y-6`; AptCardContent `space-y-4` (sidebar tips) stays per rule.
+- `src/pages/Changelog.tsx` — remove custom `space-y-4 mb-6` header; move title + filters into `AptSection` `description` / `actions`; Accordion stays `space-y-3`.
+- `src/pages/Developers.tsx` — `space-y-5` → `space-y-4`; `space-y-2.5` → `space-y-2`.
+- `src/pages/Resellers.tsx` — drop `-mt-1` on persona description.
+- `src/pages/Article.tsx` — wrap hero header children in a single `space-y-3` stack; remove `mb-3 / mt-2 / mt-4` one-offs.
+- `src/pages/Index.tsx` — replace `space-y-2 mb-6` with `space-y-2` and lift the CTA spacing to a wrapper.
+- `.lovable/plan.md` — append the "APT spacing standard" block above as the project's spacing contract.
 
-## UI / navigation changes
-
-- `src/components/AppSidebar.tsx`: rename "Resellers" label to "Partners & Resellers"; keep the route `/resellers`.
-- `src/pages/Index.tsx`: update the third audience card title + features to mention acquirers and referral partners.
-- New `src/components/PersonaTabs.tsx`: APT-styled segmented control bound to `?persona=` via `useSearchParams`. Used in `Developers.tsx`, `Businesses.tsx`, `Resellers.tsx`. "All" tab shows everything; selecting a persona filters via the new `personas` field and updates a short "What you'll find here" blurb.
-- `Article.tsx`: render `personas` tags and a "Next in this path" link when the article registry exposes a `next?: string` slug.
-
-## Technical notes
-
-- All filtering stays client-side against the static registry — no backend.
-- Reuse `useArticleFilters` for keyword + read-time; persona filter composes on top.
-- Keep APT tokens and primitives (`AptSection`, `AptCard`, `AptTag`, `EmptyState`); no new colors, gradients, or nested cards.
-- Define loading/empty/error states for filtered lists (empty → `EmptyState` with reset action).
-- No new dependencies. No schema, no Cloud changes.
-
-## Files
-
-**New**
-- `src/components/PersonaTabs.tsx`
-
-**Edit**
-- `src/content/articles.ts` (add `personas`, optional `next`, add ~12 new articles)
-- `src/pages/ApiReference.tsx` (more endpoints + error codes panel)
-- `src/pages/Developers.tsx`, `src/pages/Businesses.tsx`, `src/pages/Resellers.tsx` (persona tabs + persona-aware copy)
-- `src/pages/Article.tsx` (persona chips + "Next step")
-- `src/components/AppSidebar.tsx` (label rename)
-- `src/pages/Index.tsx` (third audience card copy)
-
-## Validation
-
-- Click each hub, switch personas, confirm article list updates and URL reflects `?persona=`.
-- Open 2–3 new articles per hub, confirm "Next step" navigates correctly.
-- Search the API reference for new endpoints (e.g., `refund`, `sub-merchant`) and confirm detail panel renders.
-- Confirm sidebar shows "Partners & Resellers" and `/resellers` still resolves.
-- Empty-state appears when keyword filter excludes all results.
-
-## Out of scope
-
-- No real auth, no backend persistence beyond existing `localStorage` feedback.
-- No new top-level routes; partner content stays under `/resellers`.
-- No visual redesign — APT tokens and existing components only.
+No new components, no token changes, no logic changes. Pure presentational alignment.

@@ -99,7 +99,7 @@ export default function Support() {
       description="Reach our support team. We respond to most requests within one business day."
     >
       <div className="grid lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-4">
+        <div className="lg:col-span-2 space-y-6">
           {submitted && (
             <AptCard variant="elevated" padding="default">
               <div className="flex items-start gap-3">
@@ -188,7 +188,7 @@ export default function Support() {
               </AptCard>
             </TabsContent>
 
-            <TabsContent value="lookup" className="mt-4 space-y-4">
+            <TabsContent value="lookup" className="mt-4 space-y-6">
               <AptCard variant="default">
                 <AptCardHeader>
                   <AptCardTitle className="flex items-center gap-2">

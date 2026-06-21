@@ -44,7 +44,7 @@ export default function Businesses() {
             </AptCardHeader>
             <AptCardContent className="space-y-3">
               <PersonaTabs audience="businesses" persona={persona} onChange={setPersona} />
-              {description && <p className="text-xs text-muted-foreground -mt-1">{description}</p>}
+              {description && <p className="text-xs text-muted-foreground">{description}</p>}
               <ArticleFiltersBar state={filters} />
               {filters.filtered.length === 0 ? (
                 <EmptyState title="No matching guides" description="Try a different keyword or change the read-time filter." />

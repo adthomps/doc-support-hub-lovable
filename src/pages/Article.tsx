@@ -105,20 +105,22 @@ export default function Article() {
       <div className="grid lg:grid-cols-3 gap-6">
         <article className="lg:col-span-2 space-y-6">
           <AptCard variant="hero" padding="feature">
-            <div className="flex items-center gap-2 mb-3 flex-wrap">
-              <AptTag variant="accent">{audienceLabel[aud]}</AptTag>
-              <AptTag variant="muted">{article.categoryLabel}</AptTag>
-              {article.personas?.map((pid) => {
-                const meta = personasByAudience[aud].find((p) => p.id === pid)
-                return meta ? <AptTag key={pid} variant="default">{meta.label}</AptTag> : null
-              })}
-            </div>
-            <h1 className="text-3xl font-semibold tracking-tight text-foreground">{article.title}</h1>
-            <p className="text-base text-muted-foreground mt-2 leading-relaxed">{article.summary}</p>
-            <div className="flex items-center gap-3 mt-4 text-xs text-muted-foreground">
-              <span className="inline-flex items-center gap-1.5"><Clock className="h-3.5 w-3.5" />{article.readTime}</span>
-              <span>•</span>
-              <span>Updated {article.updated}</span>
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 flex-wrap">
+                <AptTag variant="accent">{audienceLabel[aud]}</AptTag>
+                <AptTag variant="muted">{article.categoryLabel}</AptTag>
+                {article.personas?.map((pid) => {
+                  const meta = personasByAudience[aud].find((p) => p.id === pid)
+                  return meta ? <AptTag key={pid} variant="default">{meta.label}</AptTag> : null
+                })}
+              </div>
+              <h1 className="text-3xl font-semibold tracking-tight text-foreground">{article.title}</h1>
+              <p className="text-base text-muted-foreground leading-relaxed">{article.summary}</p>
+              <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                <span className="inline-flex items-center gap-1.5"><Clock className="h-3.5 w-3.5" />{article.readTime}</span>
+                <span>•</span>
+                <span>Updated {article.updated}</span>
+              </div>
             </div>
           </AptCard>
 
