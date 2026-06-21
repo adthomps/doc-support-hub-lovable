@@ -99,6 +99,7 @@ export default function Changelog() {
           ))}
         </Accordion>
       )}
+      </div>
     </AptSection>
   )
 }
