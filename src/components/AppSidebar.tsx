@@ -1,15 +1,25 @@
 import { useState } from "react"
-import { 
-  BookOpen, 
-  Code, 
-  Users, 
-  HeadphonesIcon, 
-  Search, 
-  FileText, 
+import {
+  BookOpen,
+  Code,
+  Users,
+  HeadphonesIcon,
+  Search,
+  FileText,
   MessageCircle,
   Shield,
   Zap,
-  Settings
+  Settings,
+  Layers,
+  Webhook,
+  Sparkles,
+  AlertTriangle,
+  GitBranch,
+  KeyRound,
+  Repeat,
+  GitMerge,
+  Network,
+  ScrollText,
 } from "lucide-react"
 import { NavLink, useLocation } from "react-router-dom"
 
@@ -41,8 +51,27 @@ const supportItems = [
 
 const resourceItems = [
   { title: "Getting Started", url: "/getting-started", icon: BookOpen },
-  { title: "API Reference", url: "/api", icon: FileText },
+  { title: "API Reference", url: "/api/reference", icon: FileText },
   { title: "Changelog", url: "/changelog", icon: Settings },
+]
+
+const apiItems = [
+  { title: "Overview", url: "/api", icon: Layers },
+  { title: "REST resources", url: "/api/rest", icon: FileText },
+  { title: "JSON-RPC methods", url: "/api/rpc", icon: GitMerge },
+  { title: "Events", url: "/api/events", icon: Zap },
+  { title: "Webhooks", url: "/api/webhooks", icon: Webhook },
+  { title: "AI tools", url: "/api/ai-tools", icon: Sparkles },
+  { title: "Errors", url: "/api/errors", icon: AlertTriangle },
+  { title: "Compatibility", url: "/api/compatibility", icon: GitBranch },
+]
+
+const architectureItems = [
+  { title: "ADRs", url: "/architecture/adrs", icon: ScrollText },
+  { title: "Boundaries", url: "/architecture/boundaries", icon: Network },
+  { title: "Security model", url: "/architecture/security", icon: KeyRound },
+  { title: "Idempotency", url: "/architecture/idempotency", icon: Repeat },
+  { title: "Versioning", url: "/architecture/versioning", icon: GitBranch },
 ]
 
 export function AppSidebar() {
@@ -122,6 +151,49 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        {/* API */}
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            API
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {apiItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <NavLink to={item.url} end={item.url === "/api"} className={getNavCls}>
+                      <item.icon className="h-4 w-4" />
+                      {!isCollapsed && <span>{item.title}</span>}
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Architecture */}
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Architecture
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {architectureItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <NavLink to={item.url} className={getNavCls}>
+                      <item.icon className="h-4 w-4" />
+                      {!isCollapsed && <span>{item.title}</span>}
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
 
         {/* Support */}
         <SidebarGroup>

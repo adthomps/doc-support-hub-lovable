@@ -1,0 +1,177 @@
+openapi: 3.1.0
+info:
+  title: APT Gateway REST API
+  version: "1.0.0"
+  description: |
+    Stub OpenAPI spec illustrating the public REST contract direction.
+    REST is the public contract; JSON-RPC, events, and AI tools are separate surfaces.
+servers:
+  - url: https://api.example.com
+paths:
+  /v1/payment-intents:
+    post:
+      summary: Create payment intent
+      operationId: createPaymentIntent
+      parameters:
+        - in: header
+          name: Idempotency-Key
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PaymentIntentCreate"
+      responses:
+        "200":
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PaymentIntent" }
+        default:
+          description: Error
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+  /v1/payment-intents/{id}/capture:
+    post:
+      summary: Capture payment intent
+      operationId: capturePaymentIntent
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+        - in: header
+          name: Idempotency-Key
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Captured
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PaymentIntent" }
+  /v1/refunds:
+    post:
+      summary: Create refund
+      operationId: createRefund
+      parameters:
+        - in: header
+          name: Idempotency-Key
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/RefundCreate" }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Refund" }
+  /v1/webhooks/endpoints:
+    post:
+      summary: Register webhook endpoint
+      operationId: createWebhookEndpoint
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/WebhookEndpointCreate" }
+      responses:
+        "200":
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/WebhookEndpoint" }
+  /v1/events/{id}:
+    get:
+      summary: Get event
+      operationId: getEvent
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Event" }
+components:
+  schemas:
+    PaymentIntentCreate:
+      type: object
+      required: [amount, currency]
+      properties:
+        amount: { type: integer, minimum: 1 }
+        currency: { type: string, example: USD }
+        customer: { type: string, example: cus_123 }
+        capture_method: { type: string, enum: [automatic, manual] }
+    PaymentIntent:
+      type: object
+      properties:
+        id: { type: string, example: pi_123 }
+        status: { type: string, example: requires_confirmation }
+        amount: { type: integer }
+        currency: { type: string }
+    RefundCreate:
+      type: object
+      required: [transaction]
+      properties:
+        transaction: { type: string, example: txn_123 }
+        amount: { type: integer }
+        reason: { type: string, example: requested_by_customer }
+    Refund:
+      type: object
+      properties:
+        id: { type: string, example: ref_123 }
+        status: { type: string, example: succeeded }
+        amount: { type: integer }
+    WebhookEndpointCreate:
+      type: object
+      required: [url, events]
+      properties:
+        url: { type: string, format: uri }
+        events: { type: array, items: { type: string } }
+    WebhookEndpoint:
+      type: object
+      properties:
+        id: { type: string, example: wh_123 }
+        secret: { type: string, example: whsec_... }
+    Event:
+      type: object
+      properties:
+        id: { type: string, example: evt_123 }
+        type: { type: string, example: payment.authorized }
+        source: { type: string, example: apt.gateway }
+        specversion: { type: string, example: "1.0" }
+        time: { type: string, format: date-time }
+        subject: { type: string, example: txn_123 }
+        data: { type: object, additionalProperties: true }
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          required: [code, message, type, request_id]
+          properties:
+            code: { type: string, example: payment_method_declined }
+            message: { type: string }
+            type: { type: string, example: payment_error }
+            request_id: { type: string, example: req_123 }
+            details: { type: object, additionalProperties: true }
+            documentation_url: { type: string, format: uri }
+            retryable: { type: boolean }
+            field_errors:
+              type: array
+              items:
+                type: object
+                properties:
+                  field: { type: string }
+                  message: { type: string }

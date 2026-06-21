@@ -17,6 +17,20 @@ import Status from "./pages/Status";
 import Article from "./pages/Article";
 import CategoryIndex from "./pages/CategoryIndex";
 import NotFound from "./pages/NotFound";
+import ApiOverview from "./pages/ApiOverview";
+import RestResources from "./pages/RestResources";
+import RpcMethods from "./pages/RpcMethods";
+import Events from "./pages/Events";
+import WebhooksGuide from "./pages/WebhooksGuide";
+import AiTools from "./pages/AiTools";
+import ErrorCatalog from "./pages/ErrorCatalog";
+import Compatibility from "./pages/Compatibility";
+import Adrs from "./pages/Adrs";
+import AdrDetail from "./pages/AdrDetail";
+import SecurityModel from "./pages/SecurityModel";
+import Idempotency from "./pages/Idempotency";
+import Versioning from "./pages/Versioning";
+import Boundaries from "./pages/Boundaries";
 
 const queryClient = new QueryClient();
 
@@ -35,7 +49,26 @@ const App = () => (
           <Route path="/:audience/articles/:slug" element={<Layout><Article /></Layout>} />
           <Route path="/:audience/category/:categorySlug" element={<Layout><CategoryIndex /></Layout>} />
           <Route path="/getting-started" element={<Layout><GettingStarted /></Layout>} />
-          <Route path="/api" element={<Layout><ApiReference /></Layout>} />
+
+          {/* API surfaces */}
+          <Route path="/api" element={<Layout><ApiOverview /></Layout>} />
+          <Route path="/api/reference" element={<Layout><ApiReference /></Layout>} />
+          <Route path="/api/rest" element={<Layout><RestResources /></Layout>} />
+          <Route path="/api/rpc" element={<Layout><RpcMethods /></Layout>} />
+          <Route path="/api/events" element={<Layout><Events /></Layout>} />
+          <Route path="/api/webhooks" element={<Layout><WebhooksGuide /></Layout>} />
+          <Route path="/api/ai-tools" element={<Layout><AiTools /></Layout>} />
+          <Route path="/api/errors" element={<Layout><ErrorCatalog /></Layout>} />
+          <Route path="/api/compatibility" element={<Layout><Compatibility /></Layout>} />
+
+          {/* Architecture */}
+          <Route path="/architecture/adrs" element={<Layout><Adrs /></Layout>} />
+          <Route path="/architecture/adrs/:id" element={<Layout><AdrDetail /></Layout>} />
+          <Route path="/architecture/security" element={<Layout><SecurityModel /></Layout>} />
+          <Route path="/architecture/idempotency" element={<Layout><Idempotency /></Layout>} />
+          <Route path="/architecture/versioning" element={<Layout><Versioning /></Layout>} />
+          <Route path="/architecture/boundaries" element={<Layout><Boundaries /></Layout>} />
+
           <Route path="/changelog" element={<Layout><Changelog /></Layout>} />
           <Route path="/faq" element={<Layout><Faq /></Layout>} />
           <Route path="/support" element={<Layout><Support /></Layout>} />

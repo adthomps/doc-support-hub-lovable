@@ -1,0 +1,68 @@
+{
+  "$schema": "https://example.com/schemas/jsonrpc-catalog.json",
+  "version": "1.0.0",
+  "methods": [
+    {
+      "name": "payment.authorize",
+      "owner": "payments",
+      "scope": "payments:authorize",
+      "side_effect": "money_movement",
+      "idempotent": true,
+      "approval_required": false,
+      "params_schema": {
+        "type": "object",
+        "required": ["merchant_id", "amount", "currency", "payment_method_token", "idempotency_key"],
+        "properties": {
+          "merchant_id": { "type": "string" },
+          "amount": { "type": "integer", "minimum": 1 },
+          "currency": { "type": "string" },
+          "payment_method_token": { "type": "string" },
+          "capture": { "type": "boolean", "default": false },
+          "idempotency_key": { "type": "string" }
+        }
+      }
+    },
+    {
+      "name": "payment.capture",
+      "owner": "payments",
+      "scope": "payments:capture",
+      "side_effect": "money_movement",
+      "idempotent": true,
+      "approval_required": false
+    },
+    {
+      "name": "payment.refund",
+      "owner": "payments",
+      "scope": "refunds:create",
+      "side_effect": "money_movement",
+      "idempotent": true,
+      "approval_required": false
+    },
+    {
+      "name": "transaction.search",
+      "owner": "transactions",
+      "scope": "transactions:read",
+      "side_effect": "read_only",
+      "idempotent": true,
+      "approval_required": false
+    },
+    {
+      "name": "provider.cybersource.authorize",
+      "owner": "adapters",
+      "scope": "payments:authorize",
+      "side_effect": "money_movement",
+      "idempotent": true,
+      "approval_required": false,
+      "internal_only": true
+    },
+    {
+      "name": "compat.authorizenet.createTransactionRequest",
+      "owner": "compat",
+      "scope": "payments:authorize",
+      "side_effect": "money_movement",
+      "idempotent": true,
+      "approval_required": false,
+      "internal_only": true
+    }
+  ]
+}
